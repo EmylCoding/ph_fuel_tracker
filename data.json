@@ -1,10 +1,8 @@
 {
-  "updated_at": "2026-09-24 11:37:45 PHT",
+  "updated_at": "2026-09-24 11:56 PHT",
   "forex": {
     "usd_php": 62.7,
     "trend_dates": [
-      "Sep 16",
-      "Sep 17",
       "Sep 18",
       "Sep 21",
       "Sep 22",
@@ -12,8 +10,6 @@
       "Sep 24"
     ],
     "rates": [
-      62.74,
-      62.72,
       62.62,
       62.88,
       62.65,
@@ -24,19 +20,19 @@
   "fuels": {
     "diesel": {
       "name": "Diesel",
-      "price_bbl": 193.74,
-      "est_impact": -2.71,
-      "status": "ROLLBACK",
+      "current_pump_price": 98.82,
+      "est_weekly_impact": 13.82,
+      "projected_pump_price": 112.64,
+      "status": "HIKE",
+      "proxy_bbl_usd": 204.19,
       "trend": [
-        84.7,
-        83.78,
-        80.99,
-        81.86,
-        79.11,
-        76.41
+        105.78,
+        102.99,
+        103.86,
+        101.11,
+        98.9
       ],
       "dates": [
-        "Sep 17",
         "Sep 18",
         "Sep 21",
         "Sep 22",
@@ -46,19 +42,19 @@
     },
     "unleaded": {
       "name": "Unleaded (Gasoline 92)",
-      "price_bbl": 140.6,
-      "est_impact": -3.97,
-      "status": "ROLLBACK",
+      "current_pump_price": 82.5,
+      "est_weekly_impact": 13.55,
+      "projected_pump_price": 96.05,
+      "status": "HIKE",
+      "proxy_bbl_usd": 146.37,
       "trend": [
-        58.09,
-        58.43,
-        57.47,
-        57.77,
-        59.41,
-        55.45
+        78.43,
+        77.47,
+        77.77,
+        79.41,
+        75.54
       ],
       "dates": [
-        "Sep 17",
         "Sep 18",
         "Sep 21",
         "Sep 22",
@@ -68,19 +64,19 @@
     },
     "premium": {
       "name": "Premium (Gasoline 95)",
-      "price_bbl": 143.6,
-      "est_impact": -3.97,
-      "status": "ROLLBACK",
+      "current_pump_price": 89.2,
+      "est_weekly_impact": 13.81,
+      "projected_pump_price": 103.01,
+      "status": "HIKE",
+      "proxy_bbl_usd": 149.37,
       "trend": [
-        59.28,
-        59.61,
-        58.66,
-        58.95,
-        60.6,
-        56.63
+        82.11,
+        81.16,
+        81.45,
+        83.1,
+        79.23
       ],
       "dates": [
-        "Sep 17",
         "Sep 18",
         "Sep 21",
         "Sep 22",
