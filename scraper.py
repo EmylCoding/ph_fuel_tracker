@@ -1,106 +1,89 @@
 import json
-import yfinance as yf
-from datetime import datetime
+import datetime
+import yfinance as yfinance
 
-def fetch_calibrated_ph_fuel_data():
-    print("Fetching global market indicators and calculating PH pump prices...")
+# Base Station Prices as of Sept 22, 2026 (Post +₱8.82 hike)
+BASE_DIESEL = 98.82
+BASE_UNLEADED = 82.50
+BASE_PREMIUM = 89.20
 
-    # 1. USD to PHP Exchange Rate Trend (7 Days)
-    usd_php_ticker = yf.Ticker("PHP=X")
-    usd_hist = usd_php_ticker.history(period="10d")
-    current_usd = float(usd_hist['Close'].iloc[-1])
-    usd_trend = [round(float(p), 2) for p in usd_hist['Close'].iloc[-5:].tolist()]
-    forex_dates = [d.strftime("%b %d") for d in usd_hist.index[-5:]]
+def get_fuel_data():
+    # Fetch Gasoil (Diesel proxy) and RBOB (Gasoline proxy)
+    diesel_ticker = yfinance.Ticker("HO=F")   # Heating Oil / Gasoil
+    gas_ticker = yfinance.Ticker("RB=F")      # RBOB Gasoline
+    forex_ticker = yfinance.Ticker("PHP=X")    # USD/PHP
 
-    # 2. Commodity Proxies
-    # Diesel Proxy: Heating Oil Futures ('HO=F')
-    # Unleaded (92) Proxy: RBOB Gasoline Futures ('RB=F')
-    # Premium (95) Proxy: RBOB Gasoline + ~$3.00/bbl Quality Spread
-    diesel_ticker = yf.Ticker("HO=F")
-    gas_ticker = yf.Ticker("RB=F")
+    d_hist = diesel_ticker.history(period="15d")['Close'].tolist()
+    g_hist = gas_ticker.history(period="15d")['Close'].tolist()
+    f_hist = forex_ticker.history(period="10d")['Close'].tolist()
 
-    diesel_hist = diesel_ticker.history(period="10d")
-    gas_hist = gas_ticker.history(period="10d")
+    current_usd = f_hist[-1]
 
-    # Convert Gallons to Barrels (1 Barrel = 42 US Gallons)
-    diesel_bbl = [float(p) * 42 for p in diesel_hist['Close'].tolist()]
-    unleaded_bbl = [float(p) * 42 for p in gas_hist['Close'].tolist()]
-    premium_bbl = [b + 3.0 for b in unleaded_bbl]
+    # Convert USD/gal to PHP/Liter
+    # 1 gal = 3.78541 L
+    d_php_liter = [(val * current_usd) / 3.78541 for val in d_hist]
+    g_php_liter = [(val * current_usd) / 3.78541 for val in g_hist]
 
-    # 3. 5-Day Moving Average Delta Calculation (Current Week vs Previous Week)
-    def calculate_weekly_delta(bbl_prices):
-        this_week_avg = sum(bbl_prices[-5:]) / 5.0
-        last_week_avg = sum(bbl_prices[-10:-5]) / 5.0
-        change_usd_bbl = this_week_avg - last_week_avg
-        
-        # Convert USD/bbl to PHP/Liter: (USD Delta / 158.987 L) * USD_PHP * 1.12 VAT Factor
-        raw_php_delta = (change_usd_bbl / 158.987) * current_usd
-        calibrated_delta = round(raw_php_delta * 1.12, 2)
-        return calibrated_delta, this_week_avg
+    # Compute 5-Day MOPS Trading Averages (Current Week vs Prior Week)
+    d_this_week = sum(d_php_liter[-5:]) / 5
+    d_last_week = sum(d_php_liter[-10:-5]) / 5
 
-    diesel_delta, diesel_bbl_avg = calculate_weekly_delta(diesel_bbl)
-    unleaded_delta, unleaded_bbl_avg = calculate_weekly_delta(unleaded_bbl)
-    premium_delta, premium_bbl_avg = calculate_weekly_delta(premium_bbl)
+    g_this_week = sum(g_php_liter[-5:]) / 5
+    g_last_week = sum(g_php_liter[-10:-5]) / 5
 
-    # 4. Station Baselines (Ground Truth as of Sept 20-22, 2026)
-    # Diesel base set to Petron visit (₱90.00 pre-hike -> ₱98.82 post Sept 22 hike)
-    BASE_DIESEL = 98.82
-    BASE_UNLEADED = 82.50
-    BASE_PREMIUM = 89.20
+    # Net Delta including 12% VAT
+    d_delta = (d_this_week - d_last_week) * 1.12
+    g_delta = (g_this_week - g_last_week) * 1.12
 
-    dates = [d.strftime("%b %d") for d in diesel_hist.index[-5:]]
+    def format_status(delta):
+        if delta < -0.10:
+            return "ROLLBACK"
+        elif delta > 0.10:
+            return "HIKE"
+        return "NO CHANGE"
 
-    # Convert 5-day proxy prices into per-liter PHP trend for charts
-    diesel_liter_trend = [round(((b / 158.987) * current_usd) + 22.0, 2) for b in diesel_bbl[-5:]]
-    unleaded_liter_trend = [round(((b / 158.987) * current_usd) + 20.0, 2) for b in unleaded_bbl[-5:]]
-    premium_liter_trend = [round(((b / 158.987) * current_usd) + 22.5, 2) for b in premium_bbl[-5:]]
+    dates = [(datetime.datetime.now() - datetime.timedelta(days=i)).strftime("%b %d") for i in range(4, -1, -1)]
 
-    # Output Structured Payload
-    data = {
-        "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M PHT"),
+    payload = {
+        "updated_at": datetime.datetime.now().strftime("%Y-%m-%d %H:%M PHT"),
         "forex": {
-            "usd_php": round(current_usd, 2),
-            "trend_dates": forex_dates,
-            "rates": usd_trend
+            "current": round(current_usd, 2),
+            "rates": [round(r, 2) for r in f_hist[-5:]],
+            "trend_dates": dates
         },
         "fuels": {
             "diesel": {
                 "name": "Diesel",
                 "current_pump_price": BASE_DIESEL,
-                "est_weekly_impact": diesel_delta,
-                "projected_pump_price": round(BASE_DIESEL + diesel_delta, 2),
-                "status": "HIKE" if diesel_delta > 0 else "ROLLBACK",
-                "proxy_bbl_usd": round(diesel_bbl_avg, 2),
-                "trend": diesel_liter_trend,
+                "est_weekly_impact": round(d_delta, 2),
+                "projected_pump_price": round(BASE_DIESEL + d_delta, 2),
+                "status": format_status(d_delta),
+                "trend": [round(p, 2) for p in d_php_liter[-5:]],
                 "dates": dates
             },
             "unleaded": {
                 "name": "Unleaded (Gasoline 92)",
                 "current_pump_price": BASE_UNLEADED,
-                "est_weekly_impact": unleaded_delta,
-                "projected_pump_price": round(BASE_UNLEADED + unleaded_delta, 2),
-                "status": "HIKE" if unleaded_delta > 0 else "ROLLBACK",
-                "proxy_bbl_usd": round(unleaded_bbl_avg, 2),
-                "trend": unleaded_liter_trend,
+                "est_weekly_impact": round(g_delta, 2),
+                "projected_pump_price": round(BASE_UNLEADED + g_delta, 2),
+                "status": format_status(g_delta),
+                "trend": [round(p, 2) for p in g_php_liter[-5:]],
                 "dates": dates
             },
             "premium": {
                 "name": "Premium (Gasoline 95)",
                 "current_pump_price": BASE_PREMIUM,
-                "est_weekly_impact": premium_delta,
-                "projected_pump_price": round(BASE_PREMIUM + premium_delta, 2),
-                "status": "HIKE" if premium_delta > 0 else "ROLLBACK",
-                "proxy_bbl_usd": round(premium_bbl_avg, 2),
-                "trend": premium_liter_trend,
+                "est_weekly_impact": round(g_delta, 2),
+                "projected_pump_price": round(BASE_PREMIUM + g_delta, 2),
+                "status": format_status(g_delta),
+                "trend": [round(p + 6.70, 2) for p in g_php_liter[-5:]],
                 "dates": dates
             }
         }
     }
 
     with open("data.json", "w") as f:
-        json.dump(data, f, indent=2)
-
-    print("Successfully updated data.json with calibrated PH prices!")
+        json.dump(payload, f, indent=2)
 
 if __name__ == "__main__":
-    fetch_calibrated_ph_fuel_data()
+    get_fuel_data()
