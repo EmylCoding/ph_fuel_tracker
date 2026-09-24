@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PH Fuel Price Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+
+  <!-- Header -->
+  <header class="border-b border-slate-800 bg-slate-950/50 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-2xl">⛽</span>
+        <h1 class="font-bold text-lg text-white">PH Fuel Price Daily Monitor</h1>
+      </div>
+      <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full border border-slate-700" id="last-updated">
+        Checking update...
+      </span>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-4xl mx-auto px-4 py-8 space-y-6">
+
+    <!-- Hero Card: Estimated Adjustment -->
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl relative overflow-hidden" id="hero-card">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Projected Weekly Movement</span>
+          <div class="flex items-baseline gap-3 mt-2">
+            <span class="text-4xl md:text-5xl font-black" id="price-impact">₱0.00</span>
+            <span class="text-lg font-bold px-3 py-1 rounded-lg uppercase" id="badge">--</span>
+          </div>
+          <p class="text-sm text-slate-400 mt-2">Based on daily MOPS proxy calculations & USD/PHP exchange rate.</p>
+        </div>
+
+        <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/50 space-y-2 min-w-[200px]">
+          <div class="flex justify-between text-sm">
+            <span class="text-slate-400">USD/PHP Rate:</span>
+            <span class="font-medium text-slate-200" id="usd-rate">₱0.00</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-slate-400">Brent Oil Proxy:</span>
+            <span class="font-medium text-slate-200" id="brent-price">$0.00/bbl</span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-slate-400">Daily Proxy Change:</span>
+            <span class="font-medium" id="brent-change">$0.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Insights -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5">
+        <h3 class="font-semibold text-slate-200 mb-2 flex items-center gap-2">
+          <span>📅</span> Weekly Timeline
+        </h3>
+        <p class="text-sm text-slate-400 leading-relaxed">
+          Daily MOPS proxy movements accumulate Monday through Friday. Official oil company adjustments are announced every <strong class="text-slate-200">Monday afternoon</strong> and take effect on <strong class="text-slate-200">Tuesday midnight (6:00 AM)</strong>.
+        </p>
+      </div>
+
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-5">
+        <h3 class="font-semibold text-slate-200 mb-2 flex items-center gap-2">
+          <span>💡</span> Data Source
+        </h3>
+        <p class="text-sm text-slate-400 leading-relaxed">
+          Data is automatically updated daily via GitHub Actions by running daily financial proxy scrapers and exporting structured results directly to raw static endpoints.
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- JavaScript to Fetch live data.json -->
+  <script>
+    async function loadFuelData() {
+      try {
+        // Fetch data.json relative to index.html location
+        const response = await fetch('./data.json?cache_bust=' + new Date().getTime());
+        if (!response.ok) throw new Error('Data file not found');
+
+        const data = await response.json();
+
+        // Update Text Elements
+        document.getElementById('last-updated').innerText = 'Updated: ' + data.updated_at;
+        document.getElementById('usd-rate').innerText = '₱' + data.usd_php_rate.toFixed(2);
+        document.getElementById('brent-price').innerText = '$' + data.brent_usd.toFixed(2) + '/bbl';
+        
+        const changeSign = data.brent_usd_change > 0 ? '+' : '';
+        const brentChangeEl = document.getElementById('brent-change');
+        brentChangeEl.innerText = `${changeSign}$${data.brent_usd_change.toFixed(2)}`;
+        brentChangeEl.className = data.brent_usd_change >= 0 ? 'text-emerald-400 font-medium' : 'text-rose-400 font-medium';
+
+        // Update Impact Badge & Hero Styling
+        const impactEl = document.getElementById('price-impact');
+        const badgeEl = document.getElementById('badge');
+        const heroCard = document.getElementById('hero-card');
+
+        const impactSign = data.est_php_liter_impact > 0 ? '+' : '';
+        impactEl.innerText = `${impactSign}₱${Math.abs(data.est_php_liter_impact).toFixed(2)} /L`;
+
+        if (data.est_php_liter_impact > 0) {
+          badgeEl.innerText = 'PROJECTED HIKE 📈';
+          badgeEl.className = 'text-xs font-bold px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30';
+          heroCard.className = 'bg-slate-800 border border-rose-500/40 rounded-2xl p-6 shadow-xl relative overflow-hidden';
+        } else if (data.est_php_liter_impact < 0) {
+          badgeEl.innerText = 'PROJECTED ROLLBACK 📉';
+          badgeEl.className = 'text-xs font-bold px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+          heroCard.className = 'bg-slate-800 border border-emerald-500/40 rounded-2xl p-6 shadow-xl relative overflow-hidden';
+        } else {
+          badgeEl.innerText = 'NO CHANGE ⚖️';
+          badgeEl.className = 'text-xs font-bold px-3 py-1.5 rounded-lg bg-slate-700 text-slate-300';
+        }
+
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        document.getElementById('last-updated').innerText = 'Unable to load data.json';
+      }
+    }
+
+    // Initialize on page load
+    loadFuelData();
+  </script>
+
+</body>
+</html>
