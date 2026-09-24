@@ -1,100 +1,100 @@
 {
-  "updated_at": "September 24, 2026 08:59 PM PHT",
+  "updated_at": "September 25, 2026 07:52 AM PHT",
   "forex": {
     "current": 62.69,
     "rates": [
-      62.74,
-      62.72,
-      62.62,
-      62.88,
+      62.65,
       62.65,
       62.46,
+      62.46,
+      62.7,
+      62.7,
       62.69
     ],
     "trend_dates": [
-      "Sep 18",
       "Sep 19",
       "Sep 20",
       "Sep 21",
       "Sep 22",
       "Sep 23",
-      "Sep 24"
+      "Sep 24",
+      "Sep 25"
     ]
   },
   "fuels": {
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 98.82,
-      "est_weekly_impact": -7.46,
-      "projected_pump_price": 91.36,
+      "est_weekly_impact": -3.95,
+      "projected_pump_price": 94.87,
       "status": "ROLLBACK",
       "trend": [
-        95.91,
-        93.72,
-        92.79,
+        90.3,
+        90.4,
+        90.21,
         90.0,
-        102.69,
-        99.94,
+        99.9,
+        98.83,
         98.82
       ],
       "dates": [
-        "Sep 18",
         "Sep 19",
         "Sep 20",
         "Sep 21",
         "Sep 22",
         "Sep 23",
-        "Sep 24"
+        "Sep 24",
+        "Sep 25"
       ]
     },
     "unleaded": {
       "name": "Unleaded (Gasoline 92)",
       "current_pump_price": 82.5,
-      "est_weekly_impact": -1.45,
-      "projected_pump_price": 81.05,
+      "est_weekly_impact": -0.63,
+      "projected_pump_price": 81.87,
       "status": "ROLLBACK",
       "trend": [
-        77.87,
-        78.24,
-        78.58,
+        76.33,
+        76.33,
+        76.19,
         77.62,
-        84.57,
-        86.22,
+        84.69,
+        82.51,
         82.5
       ],
       "dates": [
-        "Sep 18",
         "Sep 19",
         "Sep 20",
         "Sep 21",
         "Sep 22",
         "Sep 23",
-        "Sep 24"
+        "Sep 24",
+        "Sep 25"
       ]
     },
     "premium": {
       "name": "Premium (Gasoline 95)",
       "current_pump_price": 89.2,
-      "est_weekly_impact": -1.45,
-      "projected_pump_price": 87.75,
+      "est_weekly_impact": -0.63,
+      "projected_pump_price": 88.57,
       "status": "ROLLBACK",
       "trend": [
-        84.57,
-        84.94,
-        85.28,
+        83.03,
+        83.03,
+        82.89,
         84.32,
-        91.27,
-        92.92,
+        91.39,
+        89.21,
         89.2
       ],
       "dates": [
-        "Sep 18",
         "Sep 19",
         "Sep 20",
         "Sep 21",
         "Sep 22",
         "Sep 23",
-        "Sep 24"
+        "Sep 24",
+        "Sep 25"
       ]
     }
   }
