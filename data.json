@@ -1,39 +1,38 @@
 {
-  "updated_at": "2026-09-24 11:56 PHT",
+  "updated_at": "2026-09-24 12:04 PHT",
   "forex": {
-    "usd_php": 62.7,
-    "trend_dates": [
-      "Sep 18",
-      "Sep 21",
-      "Sep 22",
-      "Sep 23",
-      "Sep 24"
-    ],
+    "current": 62.7,
     "rates": [
       62.62,
       62.88,
       62.65,
       62.46,
       62.7
+    ],
+    "trend_dates": [
+      "Sep 20",
+      "Sep 21",
+      "Sep 22",
+      "Sep 23",
+      "Sep 24"
     ]
   },
   "fuels": {
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 98.82,
-      "est_weekly_impact": 13.82,
-      "projected_pump_price": 112.64,
-      "status": "HIKE",
-      "proxy_bbl_usd": 204.19,
+      "est_weekly_impact": -4.59,
+      "projected_pump_price": 94.23,
+      "status": "ROLLBACK",
       "trend": [
-        105.78,
-        102.99,
-        103.86,
-        101.11,
-        98.9
+        83.78,
+        80.99,
+        81.86,
+        79.11,
+        76.88
       ],
       "dates": [
-        "Sep 18",
+        "Sep 20",
         "Sep 21",
         "Sep 22",
         "Sep 23",
@@ -43,19 +42,18 @@
     "unleaded": {
       "name": "Unleaded (Gasoline 92)",
       "current_pump_price": 82.5,
-      "est_weekly_impact": 13.55,
-      "projected_pump_price": 96.05,
+      "est_weekly_impact": 1.27,
+      "projected_pump_price": 83.77,
       "status": "HIKE",
-      "proxy_bbl_usd": 146.37,
       "trend": [
-        78.43,
-        77.47,
-        77.77,
-        79.41,
-        75.54
+        58.43,
+        57.47,
+        57.77,
+        59.41,
+        55.51
       ],
       "dates": [
-        "Sep 18",
+        "Sep 20",
         "Sep 21",
         "Sep 22",
         "Sep 23",
@@ -65,19 +63,18 @@
     "premium": {
       "name": "Premium (Gasoline 95)",
       "current_pump_price": 89.2,
-      "est_weekly_impact": 13.81,
-      "projected_pump_price": 103.01,
+      "est_weekly_impact": 1.27,
+      "projected_pump_price": 90.47,
       "status": "HIKE",
-      "proxy_bbl_usd": 149.37,
       "trend": [
-        82.11,
-        81.16,
-        81.45,
-        83.1,
-        79.23
+        65.13,
+        64.17,
+        64.47,
+        66.11,
+        62.21
       ],
       "dates": [
-        "Sep 18",
+        "Sep 20",
         "Sep 21",
         "Sep 22",
         "Sep 23",
