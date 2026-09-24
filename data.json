@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-24 12:19 PHT",
+  "updated_at": "September 24, 2026 08:25 PM PHT",
   "forex": {
     "current": 62.7,
     "rates": [
@@ -25,16 +25,16 @@
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 98.82,
-      "est_weekly_impact": -6.67,
-      "projected_pump_price": 92.15,
+      "est_weekly_impact": -6.7,
+      "projected_pump_price": 92.12,
       "status": "ROLLBACK",
       "trend": [
-        108.91,
-        106.71,
-        105.78,
-        102.99,
-        103.86,
-        101.12,
+        108.99,
+        106.79,
+        105.86,
+        103.08,
+        103.95,
+        101.2,
         98.82
       ],
       "dates": [
