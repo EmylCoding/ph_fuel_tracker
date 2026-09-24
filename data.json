@@ -1,8 +1,92 @@
 {
-  "updated_at": "2026-09-24 00:00:00",
-  "usd_php_rate": 62.7,
-  "brent_usd": 104.85,
-  "brent_usd_change": 1.77,
-  "est_php_liter_impact": 0.7,
-  "status": "Increase"
+  "updated_at": "2026-09-24 11:37:45 PHT",
+  "forex": {
+    "usd_php": 62.7,
+    "trend_dates": [
+      "Sep 16",
+      "Sep 17",
+      "Sep 18",
+      "Sep 21",
+      "Sep 22",
+      "Sep 23",
+      "Sep 24"
+    ],
+    "rates": [
+      62.74,
+      62.72,
+      62.62,
+      62.88,
+      62.65,
+      62.46,
+      62.7
+    ]
+  },
+  "fuels": {
+    "diesel": {
+      "name": "Diesel",
+      "price_bbl": 193.74,
+      "est_impact": -2.71,
+      "status": "ROLLBACK",
+      "trend": [
+        84.7,
+        83.78,
+        80.99,
+        81.86,
+        79.11,
+        76.41
+      ],
+      "dates": [
+        "Sep 17",
+        "Sep 18",
+        "Sep 21",
+        "Sep 22",
+        "Sep 23",
+        "Sep 24"
+      ]
+    },
+    "unleaded": {
+      "name": "Unleaded (Gasoline 92)",
+      "price_bbl": 140.6,
+      "est_impact": -3.97,
+      "status": "ROLLBACK",
+      "trend": [
+        58.09,
+        58.43,
+        57.47,
+        57.77,
+        59.41,
+        55.45
+      ],
+      "dates": [
+        "Sep 17",
+        "Sep 18",
+        "Sep 21",
+        "Sep 22",
+        "Sep 23",
+        "Sep 24"
+      ]
+    },
+    "premium": {
+      "name": "Premium (Gasoline 95)",
+      "price_bbl": 143.6,
+      "est_impact": -3.97,
+      "status": "ROLLBACK",
+      "trend": [
+        59.28,
+        59.61,
+        58.66,
+        58.95,
+        60.6,
+        56.63
+      ],
+      "dates": [
+        "Sep 17",
+        "Sep 18",
+        "Sep 21",
+        "Sep 22",
+        "Sep 23",
+        "Sep 24"
+      ]
+    }
+  }
 }
