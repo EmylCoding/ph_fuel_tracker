@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-09-24 12:16 PHT",
+  "updated_at": "2026-09-24 12:19 PHT",
   "forex": {
     "current": 62.7,
     "rates": [
@@ -25,16 +25,16 @@
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 98.82,
-      "est_weekly_impact": -10.55,
-      "projected_pump_price": 88.27,
+      "est_weekly_impact": -6.67,
+      "projected_pump_price": 92.15,
       "status": "ROLLBACK",
       "trend": [
-        108.85,
-        106.65,
-        105.73,
-        102.94,
-        103.81,
-        101.06,
+        108.91,
+        106.71,
+        105.78,
+        102.99,
+        103.86,
+        101.12,
         98.82
       ],
       "dates": [
@@ -50,9 +50,9 @@
     "unleaded": {
       "name": "Unleaded (Gasoline 92)",
       "current_pump_price": 82.5,
-      "est_weekly_impact": 1.51,
-      "projected_pump_price": 84.01,
-      "status": "HIKE",
+      "est_weekly_impact": -1.45,
+      "projected_pump_price": 81.05,
+      "status": "ROLLBACK",
       "trend": [
         84.77,
         85.14,
@@ -75,9 +75,9 @@
     "premium": {
       "name": "Premium (Gasoline 95)",
       "current_pump_price": 89.2,
-      "est_weekly_impact": 1.51,
-      "projected_pump_price": 90.71,
-      "status": "HIKE",
+      "est_weekly_impact": -1.45,
+      "projected_pump_price": 87.75,
+      "status": "ROLLBACK",
       "trend": [
         91.47,
         91.84,
