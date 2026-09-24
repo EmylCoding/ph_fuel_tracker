@@ -1,40 +1,85 @@
 import json
 import os
 import yfinance as yf
+from datetime import datetime
 
-def fetch_and_save_data():
-    print("Fetching oil proxies and exchange rates...")
+def fetch_fuel_data():
+    print("Fetching fuel proxies and forex market trends...")
     
-    # 1. USD to PHP Exchange Rate
-    php_ticker = yf.Ticker("PHP=X")
-    usd_php = float(php_ticker.history(period="1d")['Close'].iloc[-1])
+    # 1. USD/PHP Exchange Rate
+    usd_php_ticker = yf.Ticker("PHP=X")
+    usd_hist = usd_php_ticker.history(period="7d")
+    current_usd = float(usd_hist['Close'].iloc[-1])
+    usd_trend = [round(float(p), 2) for p in usd_hist['Close'].tolist()]
     
-    # 2. Crude Proxy (Brent Crude)
-    oil_ticker = yf.Ticker("BZ=F")
-    history = oil_ticker.history(period="5d")
+    # 2. Proxies for Fuel Types:
+    # Diesel: Heating Oil ('HO=F') or Gasoil
+    # Unleaded (92): RBOB Gasoline ('RB=F')
+    # Premium (95): RBOB Gasoline + ~$2.50/bbl quality spread proxy
+    diesel_ticker = yf.Ticker("HO=F")      # Heating Oil / Gasoil Proxy (USD/gal)
+    gas_ticker = yf.Ticker("RB=F")         # RBOB Gasoline Proxy (USD/gal)
     
-    current_price = float(history['Close'].iloc[-1])
-    prev_price = float(history['Close'].iloc[-2])
-    usd_change = current_price - prev_price
+    diesel_hist = diesel_ticker.history(period="7d")
+    gas_hist = gas_ticker.history(period="7d")
     
-    # 3. Calculated Pump Impact (PHP per Liter)
-    php_change = (usd_change / 158.987) * usd_php
+    # Convert gallons to barrels (1 barrel = 42 US gallons)
+    diesel_bbl_trend = [float(p) * 42 for p in diesel_hist['Close'].tolist()]
+    unleaded_bbl_trend = [float(p) * 42 for p in gas_hist['Close'].tolist()]
+    # Premium 95 typically trades at a +$2.50 to $4.00/bbl premium over 92 RON
+    premium_bbl_trend = [b + 3.0 for b in unleaded_bbl_trend]
 
-    # 4. Create the JSON output payload
+    # Calculate per-liter impact formula: (Daily Change USD / 158.987 liters) * USD_PHP_rate
+    def calc_liter_impact(bbl_prices):
+        change_usd = bbl_prices[-1] - bbl_prices[-2]
+        return round((change_usd / 158.987) * current_usd, 2)
+
+    diesel_impact = calc_liter_impact(diesel_bbl_trend)
+    unleaded_impact = calc_liter_impact(unleaded_bbl_trend)
+    premium_impact = calc_liter_impact(premium_bbl_trend)
+
+    # Historical PHP/L estimated trend for chart rendering
+    dates = [d.strftime("%b %d") for d in diesel_hist.index]
+
+    # Structured Output Payload
     data = {
-        "updated_at": history.index[-1].strftime("%Y-%m-%d %H:%M:%S"),
-        "usd_php_rate": round(usd_php, 2),
-        "brent_usd": round(current_price, 2),
-        "brent_usd_change": round(usd_change, 2),
-        "est_php_liter_impact": round(php_change, 2),
-        "status": "Increase" if php_change > 0 else "Rollback"
+        "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S PHT"),
+        "forex": {
+            "usd_php": round(current_usd, 2),
+            "trend_dates": [d.strftime("%b %d") for d in usd_hist.index],
+            "rates": usd_trend
+        },
+        "fuels": {
+            "diesel": {
+                "name": "Diesel",
+                "price_bbl": round(diesel_bbl_trend[-1], 2),
+                "est_impact": diesel_impact,
+                "status": "HIKE" if diesel_impact > 0 else "ROLLBACK",
+                "trend": [round((p / 158.987) * current_usd, 2) for p in diesel_bbl_trend],
+                "dates": dates
+            },
+            "unleaded": {
+                "name": "Unleaded (Gasoline 92)",
+                "price_bbl": round(unleaded_bbl_trend[-1], 2),
+                "est_impact": unleaded_impact,
+                "status": "HIKE" if unleaded_impact > 0 else "ROLLBACK",
+                "trend": [round((p / 158.987) * current_usd, 2) for p in unleaded_bbl_trend],
+                "dates": dates
+            },
+            "premium": {
+                "name": "Premium (Gasoline 95)",
+                "price_bbl": round(premium_bbl_trend[-1], 2),
+                "est_impact": premium_impact,
+                "status": "HIKE" if premium_impact > 0 else "ROLLBACK",
+                "trend": [round((p / 158.987) * current_usd, 2) for p in premium_bbl_trend],
+                "dates": dates
+            }
+        }
     }
 
-    # Write data to a JSON file in the repository root
     with open("data.json", "w") as f:
         json.dump(data, f, indent=2)
 
-    print("Data successfully updated in data.json!")
+    print("Data successfully generated in data.json!")
 
 if __name__ == "__main__":
-    fetch_and_save_data()
+    fetch_fuel_data()
