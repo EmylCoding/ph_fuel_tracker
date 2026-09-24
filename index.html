@@ -6,6 +6,14 @@
   <title>PH Fuel Price Daily Monitor</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Fix for Chart.js canvas collapsing inside dynamic containers */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 260px;
+    }
+  </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
 
@@ -24,34 +32,32 @@
 
   <main class="max-w-5xl mx-auto px-4 py-8 space-y-8">
 
-    <!-- 3-Column Fuel Grid (Diesel, Unleaded, Premium) -->
+    <!-- Projected Fuel Cards (Diesel, Unleaded, Premium) -->
     <section>
       <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Projected Weekly Fuel Movement</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="fuel-grid">
-        <!-- Cards injected dynamically via JS -->
+        <!-- Cards loaded dynamically via JS -->
       </div>
     </section>
 
     <!-- Fuel Trading Trends Chart -->
     <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-        <div>
-          <h3 class="font-bold text-slate-200">Fuel Trading Trend (MOPS Proxies)</h3>
-          <p class="text-xs text-slate-400">7-day benchmark movement per liter in PHP</p>
-        </div>
+      <div class="mb-4">
+        <h3 class="font-bold text-slate-200">Fuel Trading Trend (MOPS Proxies)</h3>
+        <p class="text-xs text-slate-400">7-day benchmark movement per liter in PHP</p>
       </div>
-      <div class="h-64 w-full">
+      <div class="chart-container">
         <canvas id="fuelTrendChart"></canvas>
       </div>
     </section>
 
-    <!-- USD/PHP Dollar Trend Chart -->
+    <!-- USD/PHP Forex Chart -->
     <section class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
       <div class="mb-4">
         <h3 class="font-bold text-slate-200">USD/PHP Exchange Rate Trend</h3>
         <p class="text-xs text-slate-400">Bangko Sentral / Forex daily conversion benchmark</p>
       </div>
-      <div class="h-48 w-full">
+      <div class="chart-container">
         <canvas id="forexTrendChart"></canvas>
       </div>
     </section>
@@ -59,12 +65,13 @@
   </main>
 
   <script>
-    let fuelChart, forexChart;
+    let fuelChartInstance = null;
+    let forexChartInstance = null;
 
     async function loadDashboard() {
       try {
         const res = await fetch('./data.json?cache_bust=' + new Date().getTime());
-        if (!res.ok) throw new Error("Data fetch error");
+        if (!res.ok) throw new Error("Data file not found");
         const data = await res.json();
 
         document.getElementById('last-updated').innerText = 'Updated: ' + data.updated_at;
@@ -76,7 +83,7 @@
         const fuels = [data.fuels.diesel, data.fuels.unleaded, data.fuels.premium];
 
         fuels.forEach(fuel => {
-          const isHike = fuel.est_impact > 0;
+          const isHike = fuel.est_weekly_impact > 0;
           const sign = isHike ? '+' : '';
           const badgeBg = isHike ? 'bg-rose-500/20 text-rose-400 border-rose-500/30' : 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
           const cardBorder = isHike ? 'border-rose-500/30' : 'border-emerald-500/30';
@@ -85,14 +92,20 @@
             <div class="bg-slate-900 border ${cardBorder} rounded-2xl p-5 flex flex-col justify-between shadow-lg">
               <div>
                 <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">${fuel.name}</span>
-                <div class="flex items-baseline gap-2 mt-3">
-                  <span class="text-3xl font-black">${sign}₱${Math.abs(fuel.est_impact).toFixed(2)}</span>
+                <div class="flex items-baseline gap-2 mt-2">
+                  <span class="text-3xl font-black">${sign}₱${Math.abs(fuel.est_weekly_impact).toFixed(2)} /L</span>
                   <span class="text-xs font-bold px-2 py-1 rounded border ${badgeBg}">${fuel.status}</span>
                 </div>
               </div>
-              <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between text-xs text-slate-400">
-                <span>Proxy Benchmark:</span>
-                <span class="text-slate-200 font-medium">$${fuel.price_bbl.toFixed(2)} /bbl</span>
+              <div class="mt-4 pt-3 border-t border-slate-800 space-y-1 text-xs">
+                <div class="flex justify-between text-slate-400">
+                  <span>Current Pump Avg:</span>
+                  <span class="text-slate-200 font-medium">₱${fuel.current_pump_price.toFixed(2)} /L</span>
+                </div>
+                <div class="flex justify-between text-slate-400">
+                  <span>Projected Station Price:</span>
+                  <span class="text-white font-bold">₱${fuel.projected_pump_price.toFixed(2)} /L</span>
+                </div>
               </div>
             </div>
           `;
@@ -102,15 +115,15 @@
         const dates = data.fuels.diesel.dates;
         const ctxFuel = document.getElementById('fuelTrendChart').getContext('2d');
         
-        if (fuelChart) fuelChart.destroy();
-        fuelChart = new Chart(ctxFuel, {
+        if (fuelChartInstance) fuelChartInstance.destroy();
+        fuelChartInstance = new Chart(ctxFuel, {
           type: 'line',
           data: {
             labels: dates,
             datasets: [
-              { label: 'Diesel', data: data.fuels.diesel.trend, borderColor: '#f43f5e', tension: 0.3 },
-              { label: 'Unleaded (92)', data: data.fuels.unleaded.trend, borderColor: '#38bdf8', tension: 0.3 },
-              { label: 'Premium (95)', data: data.fuels.premium.trend, borderColor: '#a855f7', tension: 0.3 }
+              { label: 'Diesel', data: data.fuels.diesel.trend, borderColor: '#f43f5e', backgroundColor: '#f43f5e', tension: 0.3 },
+              { label: 'Unleaded (92)', data: data.fuels.unleaded.trend, borderColor: '#38bdf8', backgroundColor: '#38bdf8', tension: 0.3 },
+              { label: 'Premium (95)', data: data.fuels.premium.trend, borderColor: '#a855f7', backgroundColor: '#a855f7', tension: 0.3 }
             ]
           },
           options: {
@@ -126,8 +139,8 @@
 
         // 3. Render Dollar Trend Chart
         const ctxForex = document.getElementById('forexTrendChart').getContext('2d');
-        if (forexChart) forexChart.destroy();
-        forexChart = new Chart(ctxForex, {
+        if (forexChartInstance) forexChartInstance.destroy();
+        forexChartInstance = new Chart(ctxForex, {
           type: 'line',
           data: {
             labels: data.forex.trend_dates,
@@ -152,7 +165,7 @@
         });
 
       } catch (err) {
-        console.error("Dashboard error:", err);
+        console.error("Dashboard render error:", err);
       }
     }
 
