@@ -1,101 +1,56 @@
 import json
 import datetime
-import numpy as np
 import pandas as pd
 import yfinance as yf
 
-# Current Pump Baselines (Post-Sept 22 Adjustment)
-BASE_DIESEL = 98.82
-BASE_UNLEADED = 82.50
-BASE_PREMIUM = 89.20
+# Load baselines dynamically from the state file
+with open("baselines.json", "r") as f:
+    base_data = json.load(f)
 
-# Pre-Adjustment Pump Baselines
-OLD_DIESEL = 98.82 - 8.82
-OLD_UNLEADED = 82.50 - 4.88
-OLD_PREMIUM = 89.20 - 4.88
+BASE_DIESEL = base_data["current_diesel"]
+BASE_UNLEADED = base_data["current_unleaded"]
+BASE_PREMIUM = base_data["current_premium"]
 
+OLD_DIESEL = base_data["old_diesel"]
+OLD_UNLEADED = base_data["old_unleaded"]
+OLD_PREMIUM = base_data["old_premium"]
 
 def get_fuel_data():
     pht_tz = datetime.timezone(datetime.timedelta(hours=8))
     current_pht = datetime.datetime.now(pht_tz)
 
-    # 1. Fetch 2 months of raw trading data for Brent, US Futures, and FX
-    brent_raw = yf.Ticker("BZ=F").history(period="2mo")["Close"]
-    diesel_raw = yf.Ticker("HO=F").history(period="2mo")["Close"]
-    gas_raw = yf.Ticker("RB=F").history(period="2mo")["Close"]
-    forex_raw = yf.Ticker("PHP=X").history(period="2mo")["Close"]
+    # 1. Fetch raw trading data from Yahoo Finance
+    d_raw = yf.Ticker("HO=F").history(period="1mo")['Close']
+    g_raw = yf.Ticker("RB=F").history(period="1mo")['Close']
+    f_raw = yf.Ticker("PHP=X").history(period="1mo")['Close']
 
-    # 2. Build Pandas DataFrame & fill missing trading session gaps
-    df = (
-        pd.DataFrame(
-            {
-                "brent_usd": brent_raw,
-                "diesel_usd": diesel_raw,
-                "gas_usd": gas_raw,
-                "forex": forex_raw,
-            }
-        )
-        .ffill()
-        .dropna()
-    )
+    df = pd.DataFrame({'d_usd': d_raw, 'g_usd': g_raw, 'forex': f_raw}).ffill().dropna()
 
-    # 3. Convert all raw benchmarks to PHP / Liter
-    df["brent_php"] = (df["brent_usd"] * df["forex"]) / 158.987
-    df["d_fut_php"] = (df["diesel_usd"] * 42 * df["forex"]) / 158.987
-    df["g_fut_php"] = (df["gas_usd"] * 42 * df["forex"]) / 158.987
+    # 2. Convert USD/gal to PHP/Liter
+    df['d_php'] = (df['d_usd'] * 42 * df['forex']) / 158.987
+    df['g_php'] = (df['g_usd'] * 42 * df['forex']) / 158.987
 
-    # POINT 1: DUAL-PROXY MODEL
-    # Blend Brent Crude (Asian regional benchmark) with US Product Futures
-    df["diesel_composite"] = 0.60 * df["brent_php"] + 0.40 * df["d_fut_php"]
-    df["gas_composite"] = 0.40 * df["brent_php"] + 0.60 * df["g_fut_php"]
+    # 3. Strict Mon-Fri DOE Calendar Week Isolation
+    df['iso_year'] = df.index.isocalendar().year
+    df['iso_week'] = df.index.isocalendar().week
 
-    # POINT 3: DYNAMIC ROLLING REGRESSION (BETA FACTOR)
-    # Calculate 30-day dynamic beta multiplier relative to raw futures volatility
-    d_daily_returns = df["diesel_composite"].diff()
-    d_fut_returns = df["d_fut_php"].diff()
-
-    cov_d = d_daily_returns.tail(30).cov(d_fut_returns.tail(30))
-    var_d = d_fut_returns.tail(30).var()
-    beta_diesel = float(cov_d / var_d) if var_d != 0 else 1.00
-
-    g_daily_returns = df["gas_composite"].diff()
-    g_fut_returns = df["g_fut_php"].diff()
-
-    cov_g = g_daily_returns.tail(30).cov(g_fut_returns.tail(30))
-    var_g = g_fut_returns.tail(30).var()
-    beta_gas = float(cov_g / var_g) if var_g != 0 else 1.00
-
-    # Dynamic scaling bounded to realistic market limits
-    beta_diesel = max(1.10, min(beta_diesel * 1.45, 1.85))
-    beta_gas = max(0.90, min(beta_gas * 1.10, 1.35))
-
-    # POINT 2: STRICT 5-DAY CALENDAR WEEK ISOLATION (Mon-Fri)
-    df["iso_year"] = df.index.isocalendar().year
-    df["iso_week"] = df.index.isocalendar().week
-
-    unique_weeks = df[["iso_year", "iso_week"]].drop_duplicates().values
+    unique_weeks = df[['iso_year', 'iso_week']].drop_duplicates().values
     current_week_key = unique_weeks[-1]
     prior_week_key = unique_weeks[-2]
 
-    this_week_df = df[
-        (df["iso_year"] == current_week_key[0])
-        & (df["iso_week"] == current_week_key[1])
-    ]
-    last_week_df = df[
-        (df["iso_year"] == prior_week_key[0])
-        & (df["iso_week"] == prior_week_key[1])
-    ]
+    this_week_df = df[(df['iso_year'] == current_week_key[0]) & (df['iso_week'] == current_week_key[1])]
+    last_week_df = df[(df['iso_year'] == prior_week_key[0]) & (df['iso_week'] == prior_week_key[1])]
 
-    d_this_week = this_week_df["diesel_composite"].mean()
-    d_last_week = last_week_df["diesel_composite"].mean()
+    # 4. Compute Averages and Deltas (applying 12% VAT and market scaling)
+    d_this_week = this_week_df['d_php'].mean()
+    d_last_week = last_week_df['d_php'].mean()
+    g_this_week = this_week_df['g_php'].mean()
+    g_last_week = last_week_df['g_php'].mean()
 
-    g_this_week = this_week_df["gas_composite"].mean()
-    g_last_week = last_week_df["gas_composite"].mean()
+    d_raw_delta = (d_this_week - d_last_week) * 1.12 * 1.72
+    g_raw_delta = (g_this_week - g_last_week) * 1.12 * 1.00
 
-    # Final Delta Calculation using Dynamic Beta and 12% VAT
-    d_raw_delta = (d_this_week - d_last_week) * 1.12 * beta_diesel
-    g_raw_delta = (g_this_week - g_last_week) * 1.12 * beta_gas
-
+    # Regional divergence guardrail
     if g_raw_delta > -0.50 and d_raw_delta < -5.00:
         g_raw_delta = -1.45
 
@@ -109,48 +64,42 @@ def get_fuel_data():
             return "HIKE"
         return "NO CHANGE"
 
-    dates = [
-        (current_pht - datetime.timedelta(days=i)).strftime("%b %d")
-        for i in range(6, -1, -1)
-    ]
+    # 5. Dynamic Date Awareness for 7-Day Chart
+    d_7d = df['d_php'].tail(7).tolist()
+    g_7d = df['g_php'].tail(7).tolist()
 
-    d_7d = df["diesel_composite"].tail(7).tolist()
-    g_7d = df["gas_composite"].tail(7).tolist()
-
+    dates = []
     d_trend_7d = []
     g_trend_7d = []
     p_trend_7d = []
 
-    for i in range(7):
-        if i < 4:
-            d_trend_7d.append(
-                round(OLD_DIESEL + (d_7d[i] - d_7d[3]) * beta_diesel, 2)
-            )
-            g_trend_7d.append(
-                round(OLD_UNLEADED + (g_7d[i] - g_7d[3]) * beta_gas, 2)
-            )
-            p_trend_7d.append(
-                round(OLD_PREMIUM + (g_7d[i] - g_7d[3]) * beta_gas, 2)
-            )
+    # Get the date of the most recent Tuesday
+    days_since_tuesday = (current_pht.weekday() - 1) % 7
+    most_recent_tuesday = (current_pht - datetime.timedelta(days=days_since_tuesday)).date()
+
+    for i in range(6, -1, -1):
+        loop_date = (current_pht - datetime.timedelta(days=i))
+        dates.append(loop_date.strftime("%b %d"))
+        
+        # If loop date is before the most recent Tuesday, anchor to OLD prices
+        if loop_date.date() < most_recent_tuesday:
+            d_trend_7d.append(round(OLD_DIESEL + (d_7d[6-i] - d_7d[0]), 2))
+            g_trend_7d.append(round(OLD_UNLEADED + (g_7d[6-i] - g_7d[0]), 2))
+            p_trend_7d.append(round(OLD_PREMIUM + (g_7d[6-i] - g_7d[0]), 2))
         else:
-            d_trend_7d.append(
-                round(BASE_DIESEL + (d_7d[i] - d_7d[-1]) * beta_diesel, 2)
-            )
-            g_trend_7d.append(
-                round(BASE_UNLEADED + (g_7d[i] - g_7d[-1]) * beta_gas, 2)
-            )
-            p_trend_7d.append(
-                round(BASE_PREMIUM + (g_7d[i] - g_7d[-1]) * beta_gas, 2)
-            )
+            # If loop date is Tuesday or later, anchor to BASE current prices
+            d_trend_7d.append(round(BASE_DIESEL + (d_7d[6-i] - d_7d[-1]), 2))
+            g_trend_7d.append(round(BASE_UNLEADED + (g_7d[6-i] - g_7d[-1]), 2))
+            p_trend_7d.append(round(BASE_PREMIUM + (g_7d[6-i] - g_7d[-1]), 2))
 
     formatted_time = current_pht.strftime("%B %d, %Y %I:%M %p PHT")
 
     payload = {
         "updated_at": formatted_time,
         "forex": {
-            "current": round(df["forex"].iloc[-1], 2),
-            "rates": [round(r, 2) for r in df["forex"].tail(7).tolist()],
-            "trend_dates": dates,
+            "current": round(df['forex'].iloc[-1], 2),
+            "rates": [round(r, 2) for r in df['forex'].tail(7).tolist()],
+            "trend_dates": dates
         },
         "fuels": {
             "diesel": {
@@ -160,7 +109,7 @@ def get_fuel_data():
                 "projected_pump_price": round(BASE_DIESEL + d_delta, 2),
                 "status": get_status(d_delta),
                 "trend": d_trend_7d,
-                "dates": dates,
+                "dates": dates
             },
             "unleaded": {
                 "name": "Unleaded (Gasoline 92)",
@@ -169,7 +118,7 @@ def get_fuel_data():
                 "projected_pump_price": round(BASE_UNLEADED + g_delta, 2),
                 "status": get_status(g_delta),
                 "trend": g_trend_7d,
-                "dates": dates,
+                "dates": dates
             },
             "premium": {
                 "name": "Premium (Gasoline 95)",
@@ -178,14 +127,13 @@ def get_fuel_data():
                 "projected_pump_price": round(BASE_PREMIUM + g_delta, 2),
                 "status": get_status(g_delta),
                 "trend": p_trend_7d,
-                "dates": dates,
-            },
-        },
+                "dates": dates
+            }
+        }
     }
 
     with open("data.json", "w") as f:
         json.dump(payload, f, indent=2)
-
 
 if __name__ == "__main__":
     get_fuel_data()
