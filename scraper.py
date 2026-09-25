@@ -4,25 +4,25 @@ import pandas as pd
 import numpy as np
 import yfinance as yf
 
-# Load baselines dynamically with fallbacks for backward compatibility
+# Load all baseline prices, multipliers, and historical references dynamically
 with open("baselines.json", "r") as f:
     base_data = json.load(f)
 
-BASE_DIESEL = base_data.get("current_diesel", 104.91)
+BASE_DIESEL   = base_data.get("current_diesel", 104.91)
 BASE_GASOLINE = base_data.get("current_gasoline", base_data.get("current_unleaded", 92.59))
 BASE_KEROSENE = base_data.get("current_kerosene", 89.50)
 
-# Historical GasWatch PH 8-Week Benchmarks for OLS Regression
-HISTORICAL_GASOLINE = [84.00, 78.50, 80.00, 81.00, 78.50, 82.50, 88.00, 92.59]
-HISTORICAL_DIESEL   = [93.50, 88.00, 91.00, 93.00, 88.00, 93.00, 97.11, 104.91]
+GASOLINE_DAMPENER = base_data.get("gasoline_dampener", 0.85)
+KEROSENE_FACTOR   = base_data.get("kerosene_factor", 0.92)
+
+HISTORICAL_GASOLINE = base_data.get("historical_gasoline", [])
+HISTORICAL_DIESEL   = base_data.get("historical_diesel", [])
 
 def get_fuel_data():
     pht_tz = datetime.timezone(datetime.timedelta(hours=8))
     current_pht = datetime.datetime.now(pht_tz)
 
-    # 1. Fetch raw trading data
-    # HO=F (Heating Oil) tracks Diesel and Kerosene distillates
-    # RB=F (RBOB Gasoline) tracks Gasoline
+    # 1. Fetch raw trading data from Yahoo Finance
     d_raw = yf.Ticker("HO=F").history(period="3mo")['Close']
     g_raw = yf.Ticker("RB=F").history(period="3mo")['Close']
     f_raw = yf.Ticker("PHP=X").history(period="3mo")['Close']
@@ -45,20 +45,19 @@ def get_fuel_data():
 
     historical_8 = weekly_df.iloc[-9:-1] 
     current_week = weekly_df.iloc[-1]
+    prior_week   = weekly_df.iloc[-2]
 
-    # 4. Perform OLS Linear Regression for Diesel & Gasoline
+    # 4. Compute Diesel via OLS Regression against dynamic history
     m_diesel, c_diesel = np.polyfit(historical_8['d_php_l'], HISTORICAL_DIESEL, 1)
-    m_gasoline, c_gasoline = np.polyfit(historical_8['g_php_l'], HISTORICAL_GASOLINE, 1)
+    projected_diesel   = (current_week['d_php_l'] * m_diesel) + c_diesel
+    d_delta            = round(projected_diesel - BASE_DIESEL, 2)
 
-    projected_diesel = (current_week['d_php_l'] * m_diesel) + c_diesel
-    projected_gasoline = (current_week['g_php_l'] * m_gasoline) + c_gasoline
+    # 5. Compute Gasoline via WoW Delta and dynamic dampening factor
+    raw_g_wow_delta = current_week['g_php_l'] - prior_week['g_php_l']
+    g_delta         = round(raw_g_wow_delta * GASOLINE_DAMPENER, 2)
 
-    d_delta = round(projected_diesel - BASE_DIESEL, 2)
-    g_delta = round(projected_gasoline - BASE_GASOLINE, 2)
-    
-    # Kerosene is a middle distillate sharing identical MOPS trajectory as Diesel/Gasoil.
-    # Scaled by 0.92x to account for historical Kerosene vs Diesel spread.
-    k_delta = round(d_delta * 0.92, 2)
+    # 6. Compute Kerosene via dynamic distillate ratio factor
+    k_delta = round(d_delta * KEROSENE_FACTOR, 2)
 
     def get_status(delta):
         if delta <= -0.10:
@@ -67,14 +66,17 @@ def get_fuel_data():
             return "HIKE"
         return "NO CHANGE"
 
-    # 5. Generate Chart 7-Day Trend
+    # 7. Generate Chart Trends dynamically
     d_7d = df['d_php_l'].tail(7).tolist()
     g_7d = df['g_php_l'].tail(7).tolist()
     dates = [(current_pht - datetime.timedelta(days=i)).strftime("%b %d") for i in range(6, -1, -1)]
 
     d_trend_7d = [round((val * m_diesel) + c_diesel, 2) for val in d_7d]
-    g_trend_7d = [round((val * m_gasoline) + c_gasoline, 2) for val in g_7d]
-    k_trend_7d = [round(BASE_KEROSENE + (d - BASE_DIESEL) * 0.92, 2) for d in d_trend_7d]
+    
+    g_base_ref = df['g_php_l'].iloc[-7]
+    g_trend_7d = [round(BASE_GASOLINE + ((val - g_base_ref) * GASOLINE_DAMPENER), 2) for val in g_7d]
+    
+    k_trend_7d = [round(BASE_KEROSENE + (d - BASE_DIESEL) * KEROSENE_FACTOR, 2) for d in d_trend_7d]
 
     formatted_time = current_pht.strftime("%B %d, %Y %I:%M %p PHT")
 
