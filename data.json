@@ -1,7 +1,7 @@
 {
-  "updated_at": "September 25, 2026 10:15 AM PHT",
+  "updated_at": "September 25, 2026 10:19 AM PHT",
   "forex": {
-    "current": 62.62,
+    "current": 62.63,
     "rates": [
       62.65,
       62.65,
@@ -9,7 +9,7 @@
       62.46,
       62.7,
       62.7,
-      62.62
+      62.63
     ],
     "trend_dates": [
       "Sep 19",
@@ -60,7 +60,7 @@
         90.21,
         90.48,
         84.37,
-        84.29
+        84.3
       ],
       "dates": [
         "Sep 19",
