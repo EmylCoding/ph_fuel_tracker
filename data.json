@@ -1,5 +1,5 @@
 {
-  "updated_at": "September 25, 2026 10:14 AM PHT",
+  "updated_at": "September 25, 2026 10:15 AM PHT",
   "forex": {
     "current": 62.62,
     "rates": [
@@ -50,8 +50,8 @@
     "gasoline": {
       "name": "Gasoline",
       "current_pump_price": 92.59,
-      "est_weekly_impact": -4.74,
-      "projected_pump_price": 87.85,
+      "est_weekly_impact": -4.73,
+      "projected_pump_price": 87.86,
       "status": "ROLLBACK",
       "trend": [
         88.21,
@@ -59,8 +59,8 @@
         88.34,
         90.21,
         90.48,
-        84.31,
-        84.23
+        84.37,
+        84.29
       ],
       "dates": [
         "Sep 19",
