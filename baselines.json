@@ -1,8 +1,8 @@
 {
-  "current_diesel": 98.82,
-  "current_unleaded": 82.50,
-  "current_premium": 89.20,
-  "old_diesel": 90.00,
-  "old_unleaded": 77.62,
-  "old_premium": 84.32
+  "current_diesel": 104.91,
+  "current_gasoline": 92.59,
+  "current_kerosene": 89.50,
+  "old_diesel": 98.82,
+  "old_gasoline": 82.50,
+  "old_kerosene": 83.00
 }
