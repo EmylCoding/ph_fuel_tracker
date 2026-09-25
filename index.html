@@ -14,7 +14,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F4F6F9; /* SolisCloud base background */
+            background-color: #F4F6F9;
         }
         .solis-card {
             background-color: #FFFFFF;
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <!-- Metric Cards Grid (Fuels + Forex) -->
+        <!-- Metric Cards Grid (Diesel, Gasoline, Kerosene, Forex) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             
             <!-- Diesel Card -->
@@ -66,48 +66,48 @@
                 </div>
             </div>
 
-            <!-- Unleaded Card -->
+            <!-- Gasoline Card -->
             <div class="solis-card p-6">
                 <div class="flex justify-between items-start mb-4">
-                    <h3 class="text-slate-500 font-medium">Unleaded (92)</h3>
-                    <span id="unleaded-badge" class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-xs font-semibold tracking-wide">--</span>
+                    <h3 class="text-slate-500 font-medium">Gasoline</h3>
+                    <span id="gasoline-badge" class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-xs font-semibold tracking-wide">--</span>
                 </div>
                 <div class="flex items-baseline gap-2 mb-6">
-                    <span class="text-3xl font-bold text-slate-800" id="unleaded-impact">₱0.00</span>
+                    <span class="text-3xl font-bold text-slate-800" id="gasoline-impact">₱0.00</span>
                     <span class="text-slate-400 font-medium text-xs">/L expected</span>
                 </div>
                 <div class="space-y-3">
                     <div class="flex justify-between items-center text-xs sm:text-sm">
                         <span class="text-slate-400">Current Pump Avg</span>
-                        <span class="font-semibold text-slate-700" id="unleaded-current">₱0.00</span>
+                        <span class="font-semibold text-slate-700" id="gasoline-current">₱0.00</span>
                     </div>
                     <div class="w-full h-px bg-slate-100"></div>
                     <div class="flex justify-between items-center text-xs sm:text-sm">
                         <span class="text-slate-400">Projected Station</span>
-                        <span class="font-semibold text-slate-700" id="unleaded-projected">₱0.00</span>
+                        <span class="font-semibold text-slate-700" id="gasoline-projected">₱0.00</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Premium Card -->
+            <!-- Kerosene Card -->
             <div class="solis-card p-6">
                 <div class="flex justify-between items-start mb-4">
-                    <h3 class="text-slate-500 font-medium">Premium (95)</h3>
-                    <span id="premium-badge" class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-xs font-semibold tracking-wide">--</span>
+                    <h3 class="text-slate-500 font-medium">Kerosene</h3>
+                    <span id="kerosene-badge" class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-xs font-semibold tracking-wide">--</span>
                 </div>
                 <div class="flex items-baseline gap-2 mb-6">
-                    <span class="text-3xl font-bold text-slate-800" id="premium-impact">₱0.00</span>
+                    <span class="text-3xl font-bold text-slate-800" id="kerosene-impact">₱0.00</span>
                     <span class="text-slate-400 font-medium text-xs">/L expected</span>
                 </div>
                 <div class="space-y-3">
                     <div class="flex justify-between items-center text-xs sm:text-sm">
                         <span class="text-slate-400">Current Pump Avg</span>
-                        <span class="font-semibold text-slate-700" id="premium-current">₱0.00</span>
+                        <span class="font-semibold text-slate-700" id="kerosene-current">₱0.00</span>
                     </div>
                     <div class="w-full h-px bg-slate-100"></div>
                     <div class="flex justify-between items-center text-xs sm:text-sm">
                         <span class="text-slate-400">Projected Station</span>
-                        <span class="font-semibold text-slate-700" id="premium-projected">₱0.00</span>
+                        <span class="font-semibold text-slate-700" id="kerosene-projected">₱0.00</span>
                     </div>
                 </div>
             </div>
@@ -145,7 +145,6 @@
                     <p class="text-xs text-slate-400 mt-1">7-day MOPS benchmark movement</p>
                 </div>
                 
-                <!-- SolisCloud Operating Data Toggles -->
                 <div class="flex space-x-1 bg-slate-50/80 p-1 rounded-lg border border-slate-100">
                     <button class="px-4 py-1.5 bg-[#FFF0E5] text-[#F97316] rounded-md text-sm font-semibold shadow-sm">Week</button>
                     <button class="px-4 py-1.5 text-slate-400 hover:text-slate-600 rounded-md text-sm font-medium transition-colors">Month</button>
@@ -165,15 +164,13 @@
                 const response = await fetch('data.json');
                 const data = await response.json();
                 
-                // Set Header Date
                 document.getElementById('last-updated').textContent = `Updated: ${data.updated_at}`;
 
-                // Utility Formatter Functions
                 const formatImpact = (val) => `₱${Math.abs(val).toFixed(2)}`;
                 const formatPrice = (val) => `₱${val.toFixed(2)} /L`;
                 
-                // Populate Fuel Cards
                 const setCardData = (type, fuel) => {
+                    if (!fuel) return;
                     document.getElementById(`${type}-impact`).textContent = formatImpact(fuel.est_weekly_impact);
                     document.getElementById(`${type}-current`).textContent = formatPrice(fuel.current_pump_price);
                     document.getElementById(`${type}-projected`).textContent = formatPrice(fuel.projected_pump_price);
@@ -192,20 +189,16 @@
                 };
 
                 setCardData('diesel', data.fuels.diesel);
-                setCardData('unleaded', data.fuels.unleaded);
-                setCardData('premium', data.fuels.premium);
+                setCardData('gasoline', data.fuels.gasoline || data.fuels.unleaded);
+                setCardData('kerosene', data.fuels.kerosene);
 
-                // Populate Forex Card
                 if (data.forex) {
                     document.getElementById('forex-current').textContent = `₱${data.forex.current.toFixed(2)}`;
                     const rates = data.forex.rates || [data.forex.current];
-                    const maxRate = Math.max(...rates);
-                    const minRate = Math.min(...rates);
-                    document.getElementById('forex-high').textContent = `₱${maxRate.toFixed(2)}`;
-                    document.getElementById('forex-low').textContent = `₱${minRate.toFixed(2)}`;
+                    document.getElementById('forex-high').textContent = `₱${Math.max(...rates).toFixed(2)}`;
+                    document.getElementById('forex-low').textContent = `₱${Math.min(...rates).toFixed(2)}`;
                 }
 
-                // Chart.js Configuration
                 const ctx = document.getElementById('trendChart').getContext('2d');
                 new Chart(ctx, {
                     type: 'line',
@@ -221,85 +214,62 @@
                                 pointBackgroundColor: '#FFFFFF',
                                 pointBorderColor: '#8B5CF6',
                                 pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 6
+                                pointRadius: 4
                             },
                             {
-                                label: 'Unleaded (92)',
-                                data: data.fuels.unleaded.trend,
+                                label: 'Gasoline',
+                                data: (data.fuels.gasoline || data.fuels.unleaded).trend,
                                 borderColor: '#3B82F6',
                                 borderWidth: 3,
                                 tension: 0.4,
                                 pointBackgroundColor: '#FFFFFF',
                                 pointBorderColor: '#3B82F6',
                                 pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 6
+                                pointRadius: 4
                             },
                             {
-                                label: 'Premium (95)',
-                                data: data.fuels.premium.trend,
+                                label: 'Kerosene',
+                                data: data.fuels.kerosene.trend,
                                 borderColor: '#F97316',
                                 borderWidth: 3,
                                 tension: 0.4,
                                 pointBackgroundColor: '#FFFFFF',
                                 pointBorderColor: '#F97316',
                                 pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 6
+                                pointRadius: 4
                             }
                         ]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        interaction: {
-                            mode: 'index',
-                            intersect: false,
-                        },
+                        interaction: { mode: 'index', intersect: false },
                         plugins: {
                             legend: {
                                 position: 'top',
                                 align: 'start',
-                                labels: {
-                                    usePointStyle: true,
-                                    boxWidth: 8,
-                                    font: { family: 'Inter', size: 13, weight: '500' },
-                                    color: '#64748b'
-                                }
+                                labels: { usePointStyle: true, boxWidth: 8, font: { family: 'Inter', size: 13, weight: '500' }, color: '#64748b' }
                             },
                             tooltip: {
                                 backgroundColor: 'rgba(255, 255, 255, 0.95)',
                                 titleColor: '#1e293b',
                                 bodyColor: '#475569',
-                                bodyFont: { family: 'Inter', size: 13 },
-                                titleFont: { family: 'Inter', size: 14, weight: 'bold' },
                                 borderColor: '#e2e8f0',
                                 borderWidth: 1,
                                 padding: 12,
-                                boxPadding: 6,
                                 usePointStyle: true
                             }
                         },
                         scales: {
                             y: {
                                 border: { display: false },
-                                grid: { color: '#f1f5f9', drawTicks: false },
-                                ticks: { 
-                                    color: '#94a3b8', 
-                                    font: { family: 'Inter', size: 12 }, 
-                                    padding: 12,
-                                    callback: function(value) { return '₱' + value; }
-                                }
+                                grid: { color: '#f1f5f9' },
+                                ticks: { color: '#94a3b8', font: { family: 'Inter', size: 12 }, callback: (v) => '₱' + v }
                             },
                             x: {
                                 border: { display: false },
                                 grid: { display: false },
-                                ticks: { 
-                                    color: '#94a3b8', 
-                                    font: { family: 'Inter', size: 12 }, 
-                                    padding: 12 
-                                }
+                                ticks: { color: '#94a3b8', font: { family: 'Inter', size: 12 } }
                             }
                         }
                     }
@@ -307,7 +277,6 @@
             } catch (error) {
                 console.error('Error loading fuel data:', error);
                 document.getElementById('last-updated').textContent = 'Error loading data.json';
-                document.getElementById('last-updated').classList.add('text-rose-500');
             }
         });
     </script>
