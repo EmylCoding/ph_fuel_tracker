@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PH Fuel Price Monitor</title>
-    <!-- Tailwind CSS for rapid UI styling -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -26,13 +26,13 @@
 </head>
 <body class="text-slate-800 p-4 md:p-10 min-h-screen">
 
-    <div class="max-w-6xl mx-auto space-y-6">
+    <div class="max-w-7xl mx-auto space-y-6">
         
         <!-- Top Header -->
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
             <div>
                 <h1 class="text-2xl font-bold text-slate-800">PH Fuel Price Monitor</h1>
-                <p class="text-sm text-slate-500 mt-1">Projected Weekly Adjustments</p>
+                <p class="text-sm text-slate-500 mt-1">Projected Weekly Adjustments & Market Benchmarks</p>
             </div>
             <div class="bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm flex items-center gap-2">
                 <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
@@ -40,27 +40,27 @@
             </div>
         </div>
 
-        <!-- Metric Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Metric Cards Grid (Fuels + Forex) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             
             <!-- Diesel Card -->
             <div class="solis-card p-6">
                 <div class="flex justify-between items-start mb-4">
                     <h3 class="text-slate-500 font-medium">Diesel</h3>
-                    <span id="diesel-badge" class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-sm font-semibold tracking-wide">--</span>
+                    <span id="diesel-badge" class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-xs font-semibold tracking-wide">--</span>
                 </div>
                 <div class="flex items-baseline gap-2 mb-6">
-                    <span class="text-4xl font-bold text-slate-800" id="diesel-impact">₱0.00</span>
-                    <span class="text-slate-400 font-medium text-sm">/L expected</span>
+                    <span class="text-3xl font-bold text-slate-800" id="diesel-impact">₱0.00</span>
+                    <span class="text-slate-400 font-medium text-xs">/L expected</span>
                 </div>
                 <div class="space-y-3">
-                    <div class="flex justify-between items-center text-sm">
+                    <div class="flex justify-between items-center text-xs sm:text-sm">
                         <span class="text-slate-400">Current Pump Avg</span>
                         <span class="font-semibold text-slate-700" id="diesel-current">₱0.00</span>
                     </div>
                     <div class="w-full h-px bg-slate-100"></div>
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-slate-400">Projected Station Price</span>
+                    <div class="flex justify-between items-center text-xs sm:text-sm">
+                        <span class="text-slate-400">Projected Station</span>
                         <span class="font-semibold text-slate-700" id="diesel-projected">₱0.00</span>
                     </div>
                 </div>
@@ -70,20 +70,20 @@
             <div class="solis-card p-6">
                 <div class="flex justify-between items-start mb-4">
                     <h3 class="text-slate-500 font-medium">Unleaded (92)</h3>
-                    <span id="unleaded-badge" class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-sm font-semibold tracking-wide">--</span>
+                    <span id="unleaded-badge" class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-xs font-semibold tracking-wide">--</span>
                 </div>
                 <div class="flex items-baseline gap-2 mb-6">
-                    <span class="text-4xl font-bold text-slate-800" id="unleaded-impact">₱0.00</span>
-                    <span class="text-slate-400 font-medium text-sm">/L expected</span>
+                    <span class="text-3xl font-bold text-slate-800" id="unleaded-impact">₱0.00</span>
+                    <span class="text-slate-400 font-medium text-xs">/L expected</span>
                 </div>
                 <div class="space-y-3">
-                    <div class="flex justify-between items-center text-sm">
+                    <div class="flex justify-between items-center text-xs sm:text-sm">
                         <span class="text-slate-400">Current Pump Avg</span>
                         <span class="font-semibold text-slate-700" id="unleaded-current">₱0.00</span>
                     </div>
                     <div class="w-full h-px bg-slate-100"></div>
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-slate-400">Projected Station Price</span>
+                    <div class="flex justify-between items-center text-xs sm:text-sm">
+                        <span class="text-slate-400">Projected Station</span>
                         <span class="font-semibold text-slate-700" id="unleaded-projected">₱0.00</span>
                     </div>
                 </div>
@@ -93,21 +93,44 @@
             <div class="solis-card p-6">
                 <div class="flex justify-between items-start mb-4">
                     <h3 class="text-slate-500 font-medium">Premium (95)</h3>
-                    <span id="premium-badge" class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-sm font-semibold tracking-wide">--</span>
+                    <span id="premium-badge" class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-xs font-semibold tracking-wide">--</span>
                 </div>
                 <div class="flex items-baseline gap-2 mb-6">
-                    <span class="text-4xl font-bold text-slate-800" id="premium-impact">₱0.00</span>
-                    <span class="text-slate-400 font-medium text-sm">/L expected</span>
+                    <span class="text-3xl font-bold text-slate-800" id="premium-impact">₱0.00</span>
+                    <span class="text-slate-400 font-medium text-xs">/L expected</span>
                 </div>
                 <div class="space-y-3">
-                    <div class="flex justify-between items-center text-sm">
+                    <div class="flex justify-between items-center text-xs sm:text-sm">
                         <span class="text-slate-400">Current Pump Avg</span>
                         <span class="font-semibold text-slate-700" id="premium-current">₱0.00</span>
                     </div>
                     <div class="w-full h-px bg-slate-100"></div>
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="text-slate-400">Projected Station Price</span>
+                    <div class="flex justify-between items-center text-xs sm:text-sm">
+                        <span class="text-slate-400">Projected Station</span>
                         <span class="font-semibold text-slate-700" id="premium-projected">₱0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Forex Exchange Card -->
+            <div class="solis-card p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h3 class="text-slate-500 font-medium">USD / PHP Forex</h3>
+                    <span class="px-3 py-1 bg-amber-50 text-amber-600 border border-amber-100 rounded-lg text-xs font-bold tracking-wide">FX RATE</span>
+                </div>
+                <div class="flex items-baseline gap-2 mb-6">
+                    <span class="text-3xl font-bold text-slate-800" id="forex-current">₱0.00</span>
+                    <span class="text-slate-400 font-medium text-xs">/ USD</span>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center text-xs sm:text-sm">
+                        <span class="text-slate-400">7-Day High</span>
+                        <span class="font-semibold text-slate-700" id="forex-high">₱0.00</span>
+                    </div>
+                    <div class="w-full h-px bg-slate-100"></div>
+                    <div class="flex justify-between items-center text-xs sm:text-sm">
+                        <span class="text-slate-400">7-Day Low</span>
+                        <span class="font-semibold text-slate-700" id="forex-low">₱0.00</span>
                     </div>
                 </div>
             </div>
@@ -122,7 +145,7 @@
                     <p class="text-xs text-slate-400 mt-1">7-day MOPS benchmark movement</p>
                 </div>
                 
-                <!-- Mimicking the SolisCloud Operating Data Toggles -->
+                <!-- SolisCloud Operating Data Toggles -->
                 <div class="flex space-x-1 bg-slate-50/80 p-1 rounded-lg border border-slate-100">
                     <button class="px-4 py-1.5 bg-[#FFF0E5] text-[#F97316] rounded-md text-sm font-semibold shadow-sm">Week</button>
                     <button class="px-4 py-1.5 text-slate-400 hover:text-slate-600 rounded-md text-sm font-medium transition-colors">Month</button>
@@ -139,18 +162,17 @@
     <script>
         document.addEventListener("DOMContentLoaded", async () => {
             try {
-                // Fetch the payload generated by your python scraper
                 const response = await fetch('data.json');
                 const data = await response.json();
                 
                 // Set Header Date
                 document.getElementById('last-updated').textContent = `Updated: ${data.updated_at}`;
 
-                // Utility Functions
+                // Utility Formatter Functions
                 const formatImpact = (val) => `₱${Math.abs(val).toFixed(2)}`;
                 const formatPrice = (val) => `₱${val.toFixed(2)} /L`;
                 
-                // Inject Data to DOM Cards
+                // Populate Fuel Cards
                 const setCardData = (type, fuel) => {
                     document.getElementById(`${type}-impact`).textContent = formatImpact(fuel.est_weekly_impact);
                     document.getElementById(`${type}-current`).textContent = formatPrice(fuel.current_pump_price);
@@ -158,13 +180,13 @@
                     
                     const badge = document.getElementById(`${type}-badge`);
                     if (fuel.status === 'ROLLBACK') {
-                        badge.className = 'px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-lg text-sm font-bold tracking-wide';
+                        badge.className = 'px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-lg text-xs font-bold tracking-wide';
                         badge.textContent = `▼ ROLLBACK`;
                     } else if (fuel.status === 'HIKE') {
-                        badge.className = 'px-3 py-1 bg-rose-50 text-rose-600 border border-rose-100 rounded-lg text-sm font-bold tracking-wide';
+                        badge.className = 'px-3 py-1 bg-rose-50 text-rose-600 border border-rose-100 rounded-lg text-xs font-bold tracking-wide';
                         badge.textContent = `▲ HIKE`;
                     } else {
-                        badge.className = 'px-3 py-1 bg-slate-100 text-slate-500 border border-slate-200 rounded-lg text-sm font-bold tracking-wide';
+                        badge.className = 'px-3 py-1 bg-slate-100 text-slate-500 border border-slate-200 rounded-lg text-xs font-bold tracking-wide';
                         badge.textContent = `NO CHANGE`;
                     }
                 };
@@ -173,7 +195,17 @@
                 setCardData('unleaded', data.fuels.unleaded);
                 setCardData('premium', data.fuels.premium);
 
-                // Chart.js Configuration for SolisCloud Aesthetic
+                // Populate Forex Card
+                if (data.forex) {
+                    document.getElementById('forex-current').textContent = `₱${data.forex.current.toFixed(2)}`;
+                    const rates = data.forex.rates || [data.forex.current];
+                    const maxRate = Math.max(...rates);
+                    const minRate = Math.min(...rates);
+                    document.getElementById('forex-high').textContent = `₱${maxRate.toFixed(2)}`;
+                    document.getElementById('forex-low').textContent = `₱${minRate.toFixed(2)}`;
+                }
+
+                // Chart.js Configuration
                 const ctx = document.getElementById('trendChart').getContext('2d');
                 new Chart(ctx, {
                     type: 'line',
@@ -183,9 +215,9 @@
                             {
                                 label: 'Diesel',
                                 data: data.fuels.diesel.trend,
-                                borderColor: '#8B5CF6', // Vibrant Purple
+                                borderColor: '#8B5CF6',
                                 borderWidth: 3,
-                                tension: 0.4, // Smooth curve
+                                tension: 0.4,
                                 pointBackgroundColor: '#FFFFFF',
                                 pointBorderColor: '#8B5CF6',
                                 pointBorderWidth: 2,
@@ -195,7 +227,7 @@
                             {
                                 label: 'Unleaded (92)',
                                 data: data.fuels.unleaded.trend,
-                                borderColor: '#3B82F6', // Soft Blue
+                                borderColor: '#3B82F6',
                                 borderWidth: 3,
                                 tension: 0.4,
                                 pointBackgroundColor: '#FFFFFF',
@@ -207,7 +239,7 @@
                             {
                                 label: 'Premium (95)',
                                 data: data.fuels.premium.trend,
-                                borderColor: '#F97316', // Soft Orange
+                                borderColor: '#F97316',
                                 borderWidth: 3,
                                 tension: 0.4,
                                 pointBackgroundColor: '#FFFFFF',
@@ -233,7 +265,7 @@
                                     usePointStyle: true,
                                     boxWidth: 8,
                                     font: { family: 'Inter', size: 13, weight: '500' },
-                                    color: '#64748b' // slate-500
+                                    color: '#64748b'
                                 }
                             },
                             tooltip: {
