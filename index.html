@@ -35,7 +35,7 @@
                 <p class="text-sm text-slate-500 mt-1">Projected Weekly Adjustments & Market Benchmarks</p>
             </div>
             <div class="bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" id="status-indicator"></div>
                 <span class="text-sm font-medium text-slate-600" id="last-updated">Fetching latest data...</span>
             </div>
         </div>
@@ -162,12 +162,13 @@
         document.addEventListener("DOMContentLoaded", async () => {
             try {
                 const response = await fetch('data.json');
+                if (!response.ok) throw new Error('data.json not found');
                 const data = await response.json();
                 
-                document.getElementById('last-updated').textContent = `Updated: ${data.updated_at}`;
+                document.getElementById('last-updated').textContent = `Updated: ${data.updated_at || 'Recently'}`;
 
-                const formatImpact = (val) => `₱${Math.abs(val).toFixed(2)}`;
-                const formatPrice = (val) => `₱${val.toFixed(2)} /L`;
+                const formatImpact = (val) => `₱${Math.abs(val || 0).toFixed(2)}`;
+                const formatPrice = (val) => `₱${(val || 0).toFixed(2)} /L`;
                 
                 const setCardData = (type, fuel) => {
                     if (!fuel) return;
@@ -188,26 +189,37 @@
                     }
                 };
 
-                setCardData('diesel', data.fuels.diesel);
-                setCardData('gasoline', data.fuels.gasoline || data.fuels.unleaded);
-                setCardData('kerosene', data.fuels.kerosene);
+                // Map keys with backwards compatibility
+                const dieselFuel = data.fuels.diesel;
+                const gasolineFuel = data.fuels.gasoline || data.fuels.unleaded;
+                const keroseneFuel = data.fuels.kerosene || data.fuels.premium;
+
+                setCardData('diesel', dieselFuel);
+                setCardData('gasoline', gasolineFuel);
+                setCardData('kerosene', keroseneFuel);
 
                 if (data.forex) {
-                    document.getElementById('forex-current').textContent = `₱${data.forex.current.toFixed(2)}`;
-                    const rates = data.forex.rates || [data.forex.current];
+                    document.getElementById('forex-current').textContent = `₱${(data.forex.current || 0).toFixed(2)}`;
+                    const rates = data.forex.rates || [data.forex.current || 0];
                     document.getElementById('forex-high').textContent = `₱${Math.max(...rates).toFixed(2)}`;
                     document.getElementById('forex-low').textContent = `₱${Math.min(...rates).toFixed(2)}`;
                 }
+
+                // Extract trends safely
+                const dates = dieselFuel?.dates || [];
+                const dieselTrend = dieselFuel?.trend || [];
+                const gasolineTrend = gasolineFuel?.trend || [];
+                const keroseneTrend = keroseneFuel?.trend || [];
 
                 const ctx = document.getElementById('trendChart').getContext('2d');
                 new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: data.fuels.diesel.dates,
+                        labels: dates,
                         datasets: [
                             {
                                 label: 'Diesel',
-                                data: data.fuels.diesel.trend,
+                                data: dieselTrend,
                                 borderColor: '#8B5CF6',
                                 borderWidth: 3,
                                 tension: 0.4,
@@ -218,7 +230,7 @@
                             },
                             {
                                 label: 'Gasoline',
-                                data: (data.fuels.gasoline || data.fuels.unleaded).trend,
+                                data: gasolineTrend,
                                 borderColor: '#3B82F6',
                                 borderWidth: 3,
                                 tension: 0.4,
@@ -229,7 +241,7 @@
                             },
                             {
                                 label: 'Kerosene',
-                                data: data.fuels.kerosene.trend,
+                                data: keroseneTrend,
                                 borderColor: '#F97316',
                                 borderWidth: 3,
                                 tension: 0.4,
@@ -277,6 +289,7 @@
             } catch (error) {
                 console.error('Error loading fuel data:', error);
                 document.getElementById('last-updated').textContent = 'Error loading data.json';
+                document.getElementById('status-indicator').className = 'w-2 h-2 rounded-full bg-rose-500';
             }
         });
     </script>
