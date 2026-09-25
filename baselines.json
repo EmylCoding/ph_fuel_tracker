@@ -1,12 +1,13 @@
 {
   "current_diesel": 104.91,
   "current_gasoline": 92.59,
-  "current_kerosene": 89.50,
+  "current_kerosene": 131.00,
   "old_diesel": 98.82,
   "old_gasoline": 82.50,
-  "old_kerosene": 83.00,
+  "old_kerosene": 124.53,
   "gasoline_dampener": 0.85,
   "kerosene_factor": 0.92,
   "historical_gasoline": [84.00, 78.50, 80.00, 81.00, 78.50, 82.50, 88.00, 92.59],
-  "historical_diesel": [93.50, 88.00, 91.00, 93.00, 88.00, 93.00, 97.11, 104.91]
+  "historical_diesel": [93.50, 88.00, 91.00, 93.00, 88.00, 93.00, 97.11, 104.91],
+  "historical_kerosene": [119.80, 114.00, 117.20, 119.50, 114.33, 119.91, 124.53, 131.00]
 }
