@@ -10,13 +10,14 @@ with open("baselines.json", "r") as f:
 
 BASE_DIESEL   = base_data.get("current_diesel", 104.91)
 BASE_GASOLINE = base_data.get("current_gasoline", base_data.get("current_unleaded", 92.59))
-BASE_KEROSENE = base_data.get("current_kerosene", 89.50)
+BASE_KEROSENE = base_data.get("current_kerosene", 131.00)
 
 GASOLINE_DAMPENER = base_data.get("gasoline_dampener", 0.85)
 KEROSENE_FACTOR   = base_data.get("kerosene_factor", 0.92)
 
 HISTORICAL_GASOLINE = base_data.get("historical_gasoline", [])
 HISTORICAL_DIESEL   = base_data.get("historical_diesel", [])
+HISTORICAL_KEROSENE = base_data.get("historical_kerosene", [])
 
 def get_fuel_data():
     pht_tz = datetime.timezone(datetime.timedelta(hours=8))
