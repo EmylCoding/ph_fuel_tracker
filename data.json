@@ -1,7 +1,7 @@
 {
-  "updated_at": "September 25, 2026 10:19 AM PHT",
+  "updated_at": "September 25, 2026 10:37 AM PHT",
   "forex": {
-    "current": 62.63,
+    "current": 62.6,
     "rates": [
       62.65,
       62.65,
@@ -9,7 +9,7 @@
       62.46,
       62.7,
       62.7,
-      62.63
+      62.6
     ],
     "trend_dates": [
       "Sep 19",
@@ -25,8 +25,8 @@
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 104.91,
-      "est_weekly_impact": -7.1,
-      "projected_pump_price": 97.81,
+      "est_weekly_impact": -7.13,
+      "projected_pump_price": 97.78,
       "status": "ROLLBACK",
       "trend": [
         99.13,
@@ -34,8 +34,8 @@
         99.55,
         97.71,
         97.91,
-        94.59,
-        94.53
+        94.51,
+        94.43
       ],
       "dates": [
         "Sep 19",
@@ -50,17 +50,17 @@
     "gasoline": {
       "name": "Gasoline",
       "current_pump_price": 92.59,
-      "est_weekly_impact": -4.73,
-      "projected_pump_price": 87.86,
+      "est_weekly_impact": -0.21,
+      "projected_pump_price": 92.38,
       "status": "ROLLBACK",
       "trend": [
-        88.21,
-        88.54,
-        88.34,
-        90.21,
-        90.48,
-        84.37,
-        84.3
+        92.59,
+        92.87,
+        92.7,
+        94.26,
+        94.48,
+        89.36,
+        89.28
       ],
       "dates": [
         "Sep 19",
@@ -75,8 +75,8 @@
     "kerosene": {
       "name": "Kerosene",
       "current_pump_price": 89.5,
-      "est_weekly_impact": -6.53,
-      "projected_pump_price": 82.97,
+      "est_weekly_impact": -6.56,
+      "projected_pump_price": 82.94,
       "status": "ROLLBACK",
       "trend": [
         84.18,
@@ -84,8 +84,8 @@
         84.57,
         82.88,
         83.06,
-        80.01,
-        79.95
+        79.93,
+        79.86
       ],
       "dates": [
         "Sep 19",
