@@ -2,7 +2,7 @@ name: Daily Fuel Data Update
 
 on:
   schedule:
-    - cron: '58 2 * * *'
+    - cron: '20 15 * * *'
       timezone: 'Asia/Manila'
   workflow_dispatch:
 
