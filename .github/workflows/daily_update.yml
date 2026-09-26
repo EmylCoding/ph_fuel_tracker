@@ -2,13 +2,14 @@ name: Daily Fuel Data Update
 
 on:
   schedule:
-    - cron: '20 14 * * *' # Runs every day at 6:00 PM Philippine Time (10:00 AM UTC)
+    - cron: '26 14 * * *' # Runs every day at 6:00 PM Philippine Time (10:00 AM UTC)
   workflow_dispatch:     # Enables a manual "Run" button in GitHub UI
 
 jobs:
   run-scraper:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write # Grants permission for git commit & push
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
