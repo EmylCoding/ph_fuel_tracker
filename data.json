@@ -1,32 +1,32 @@
 {
-  "updated_at": "September 28, 2026 06:51 PM PHT",
+  "updated_at": "September 29, 2026 03:38 AM PHT",
   "forex": {
-    "current": 62.48,
+    "current": 62.45,
     "rates": [
       62.46,
       62.7,
       62.7,
       62.37,
       62.37,
-      62.48,
-      62.48
+      62.45,
+      62.45
     ],
     "trend_dates": [
-      "Sep 22",
       "Sep 23",
       "Sep 24",
       "Sep 25",
       "Sep 26",
       "Sep 27",
-      "Sep 28"
+      "Sep 28",
+      "Sep 29"
     ]
   },
   "fuels": {
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 104.91,
-      "est_weekly_impact": -10.48,
-      "projected_pump_price": 94.43,
+      "est_weekly_impact": -11.19,
+      "projected_pump_price": 93.72,
       "status": "ROLLBACK",
       "trend": [
         95.11,
@@ -34,24 +34,24 @@
         94.96,
         94.83,
         94.58,
-        94.63,
-        94.43
+        94.62,
+        93.72
       ],
       "dates": [
-        "Sep 22",
         "Sep 23",
         "Sep 24",
         "Sep 25",
         "Sep 26",
         "Sep 27",
-        "Sep 28"
+        "Sep 28",
+        "Sep 29"
       ]
     },
     "gasoline": {
       "name": "Gasoline",
       "current_pump_price": 92.59,
-      "est_weekly_impact": -3.89,
-      "projected_pump_price": 88.7,
+      "est_weekly_impact": -5.36,
+      "projected_pump_price": 87.23,
       "status": "ROLLBACK",
       "trend": [
         92.59,
@@ -59,24 +59,24 @@
         92.45,
         92.15,
         89.47,
-        89.57,
-        87.44
+        89.54,
+        85.97
       ],
       "dates": [
-        "Sep 22",
         "Sep 23",
         "Sep 24",
         "Sep 25",
         "Sep 26",
         "Sep 27",
-        "Sep 28"
+        "Sep 28",
+        "Sep 29"
       ]
     },
     "kerosene": {
       "name": "Kerosene",
       "current_pump_price": 131.0,
-      "est_weekly_impact": -9.64,
-      "projected_pump_price": 121.36,
+      "est_weekly_impact": -10.29,
+      "projected_pump_price": 120.71,
       "status": "ROLLBACK",
       "trend": [
         121.98,
@@ -84,17 +84,17 @@
         121.85,
         121.73,
         121.5,
-        121.54,
-        121.36
+        121.53,
+        120.71
       ],
       "dates": [
-        "Sep 22",
         "Sep 23",
         "Sep 24",
         "Sep 25",
         "Sep 26",
         "Sep 27",
-        "Sep 28"
+        "Sep 28",
+        "Sep 29"
       ]
     }
   }
