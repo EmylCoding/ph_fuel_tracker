@@ -1,7 +1,7 @@
 {
-  "updated_at": "September 29, 2026 10:51 AM PHT",
+  "updated_at": "September 29, 2026 11:34 AM PHT",
   "forex": {
-    "current": 62.37,
+    "current": 62.44,
     "rates": [
       62.7,
       62.7,
@@ -9,7 +9,7 @@
       62.37,
       62.37,
       62.37,
-      62.37
+      62.44
     ],
     "trend_dates": [
       "Sep 23",
@@ -24,18 +24,18 @@
   "fuels": {
     "diesel": {
       "name": "Diesel",
-      "current_pump_price": 93.91,
-      "est_weekly_impact": 0.01,
-      "projected_pump_price": 93.92,
+      "current_pump_price": 93.92,
+      "est_weekly_impact": 0.07,
+      "projected_pump_price": 93.99,
       "status": "NO CHANGE",
       "trend": [
-        93.12,
-        92.87,
-        92.73,
-        92.49,
-        92.49,
-        91.83,
-        91.83
+        93.13,
+        92.88,
+        92.74,
+        92.5,
+        92.5,
+        91.89,
+        91.92
       ],
       "dates": [
         "Sep 23",
@@ -49,18 +49,18 @@
     },
     "gasoline": {
       "name": "Gasoline",
-      "current_pump_price": 87.16,
-      "est_weekly_impact": -5.46,
-      "projected_pump_price": 81.7,
+      "current_pump_price": 81.7,
+      "est_weekly_impact": -5.28,
+      "projected_pump_price": 76.42,
       "status": "ROLLBACK",
       "trend": [
-        88.94,
-        88.59,
-        88.29,
-        85.6,
-        85.6,
-        81.99,
-        82.0
+        83.48,
+        83.13,
+        82.83,
+        80.14,
+        80.14,
+        76.69,
+        76.75
       ],
       "dates": [
         "Sep 23",
@@ -74,18 +74,18 @@
     },
     "kerosene": {
       "name": "Kerosene",
-      "current_pump_price": 120.88,
-      "est_weekly_impact": 0.01,
-      "projected_pump_price": 120.89,
+      "current_pump_price": 120.89,
+      "est_weekly_impact": 0.06,
+      "projected_pump_price": 120.95,
       "status": "NO CHANGE",
       "trend": [
-        120.15,
-        119.92,
-        119.8,
-        119.57,
-        119.57,
-        118.97,
-        118.97
+        120.16,
+        119.93,
+        119.81,
+        119.58,
+        119.58,
+        119.02,
+        119.05
       ],
       "dates": [
         "Sep 23",
