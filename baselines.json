@@ -1,42 +1,12 @@
 {
-  "current_diesel": 7.57,
-  "current_gasoline": 7.57,
-  "current_kerosene": 5.85,
-  "old_diesel": 98.82,
-  "old_gasoline": 82.5,
-  "old_kerosene": 124.53,
+  "current_diesel": 95.95,
+  "current_gasoline": 89.55,
+  "current_kerosene": 123.68,
   "gasoline_dampener": 0.85,
   "kerosene_factor": 0.92,
-  "historical_gasoline": [
-    78.5,
-    80.0,
-    81.0,
-    78.5,
-    82.5,
-    88.0,
-    92.59,
-    7.57
-  ],
-  "historical_diesel": [
-    88.0,
-    91.0,
-    93.0,
-    88.0,
-    93.0,
-    97.11,
-    104.91,
-    7.57
-  ],
-  "historical_kerosene": [
-    114.0,
-    117.2,
-    119.5,
-    114.33,
-    119.91,
-    124.53,
-    131.0,
-    5.85
-  ],
-  "last_gaswatch_sync": "2026-09-29T14:22:01.062243+08:00",
+  "historical_gasoline": [78.50, 80.00, 81.00, 78.50, 82.50, 88.00, 92.59, 89.55],
+  "historical_diesel": [88.00, 91.00, 93.00, 88.00, 93.00, 97.11, 104.91, 95.95],
+  "historical_kerosene": [114.00, 117.20, 119.50, 114.33, 119.91, 124.53, 131.00, 123.68],
+  "last_gaswatch_sync": "",
   "last_anchor": "2026-09-29"
 }
