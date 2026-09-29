@@ -1,16 +1,16 @@
 {
-  "updated_at": "September 29, 2026 02:08 PM PHT",
+  "updated_at": "September 29, 2026 02:22 PM PHT",
   "source": "GasWatch PH and Yahoo Finance market proxies",
   "forex": {
-    "current": 62.44,
+    "current": 62.47,
     "rates": [
       62.7,
       62.37,
       62.37,
       62.37,
       62.37,
-      62.44,
-      62.44
+      62.47,
+      62.47
     ],
     "trend_dates": [
       "Sep 23",
@@ -26,16 +26,16 @@
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 7.57,
-      "est_weekly_impact": 72.65,
-      "projected_pump_price": 80.22,
+      "est_weekly_impact": 73.43,
+      "projected_pump_price": 81.0,
       "status": "HIKE",
       "trend": [
-        11.68,
-        10.35,
-        9.51,
-        9.51,
-        9.51,
-        10.92,
+        11.96,
+        10.63,
+        9.79,
+        9.79,
+        9.79,
+        11.24,
         7.57
       ],
       "dates": [
@@ -51,16 +51,16 @@
     "gasoline": {
       "name": "Gasoline",
       "current_pump_price": 7.57,
-      "est_weekly_impact": -3.53,
-      "projected_pump_price": 4.04,
+      "est_weekly_impact": -3.54,
+      "projected_pump_price": 4.03,
       "status": "ROLLBACK",
       "trend": [
-        14.24,
-        13.59,
-        10.9,
-        10.9,
-        10.91,
-        10.09,
+        14.31,
+        13.65,
+        10.97,
+        10.97,
+        10.97,
+        10.18,
         7.57
       ],
       "dates": [
@@ -75,18 +75,18 @@
     },
     "kerosene": {
       "name": "Kerosene",
-      "current_pump_price": 41.44,
-      "est_weekly_impact": 66.84,
-      "projected_pump_price": 108.28,
+      "current_pump_price": 5.85,
+      "est_weekly_impact": 67.56,
+      "projected_pump_price": 73.41,
       "status": "HIKE",
       "trend": [
-        45.22,
-        44.0,
-        43.23,
-        43.23,
-        43.23,
-        44.52,
-        41.44
+        9.89,
+        8.67,
+        7.89,
+        7.89,
+        7.89,
+        9.23,
+        5.85
       ],
       "dates": [
         "Sep 23",
