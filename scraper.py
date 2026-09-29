@@ -6,7 +6,7 @@ import pytz
 import yfinance as yf
 
 # ==========================================
-# 1. TIMEZONE & INITIAL SETUP
+# 1. TIMEZONE & PATH CONFIG
 # ==========================================
 pht = pytz.timezone("Asia/Manila")
 current_pht = datetime.now(pht)
@@ -14,36 +14,34 @@ current_pht = datetime.now(pht)
 BASELINES_FILE = "baselines.json"
 DATA_FILE = "data.json"
 
-# Default baseline fallback values
+# ==========================================
+# 2. LOAD BASELINES
+# ==========================================
 default_baselines = {
-    "last_anchor": "",
-    "current_diesel": 58.50,
-    "current_gasoline": 62.00,
-    "current_kerosene": 70.00
+    "current_diesel": 104.91,
+    "current_gasoline": 92.59,
+    "current_kerosene": 131.0,
+    "historical_diesel": [93.5, 88.0, 91.0, 93.0, 88.0, 93.0, 97.11, 104.91],
+    "historical_gasoline": [84.0, 78.5, 80.0, 81.0, 78.5, 82.5, 88.0, 92.59],
+    "historical_kerosene": [119.8, 114.0, 117.2, 119.5, 114.33, 119.91, 124.53, 131.0],
+    "last_anchor": ""
 }
 
-# ==========================================
-# 2. LOAD & AUTO-UPDATE BASELINES
-# ==========================================
 if os.path.exists(BASELINES_FILE):
     try:
         with open(BASELINES_FILE, "r") as f:
-            baselines_data = json.load(f)
+            baselines = json.load(f)
     except Exception as e:
-        print(f"[WARN] Failed to read {BASELINES_FILE}, fallback to defaults: {e}")
-        baselines_data = default_baselines
+        print(f"[WARN] Error reading {BASELINES_FILE}, fallback to defaults: {e}")
+        baselines = default_baselines
 else:
-    baselines_data = default_baselines
-
-base_diesel = float(baselines_data.get("current_diesel", 58.50))
-base_gas = float(baselines_data.get("current_gasoline", 62.00))
-base_kero = float(baselines_data.get("current_kerosene", 70.00))
+    baselines = default_baselines
 
 # ==========================================
 # 3. FETCH YFINANCE MARKET BENCHMARKS
 # ==========================================
 tickers = ["BZ=F", "RB=F", "HO=F", "PHP=X"]
-print("[INFO] Fetching market data...")
+print("[INFO] Fetching market benchmark data...")
 df_raw = yf.download(tickers=tickers, period="21d", interval="1d", progress=False)
 
 if isinstance(df_raw.columns, pd.MultiIndex):
@@ -65,14 +63,14 @@ df = pd.DataFrame({
     "ho": ho_series
 }).ffill().bfill()
 
-# Unit conversions to PHP / Liter
+# Convert benchmarks to PHP per Liter
 df["d_php_l"] = (df["brent"] / 158.987) * df["forex"]
 df["g_php_l"] = (df["rbob"] / 3.78541) * df["forex"]
 df["k_php_l"] = (df["ho"] / 3.78541) * df["forex"]
 df.index = pd.to_datetime(df.index)
 
 # ==========================================
-# 4. DETERMINE TUESDAY ANCHOR & SAVE BASELINE
+# 4. TUESDAY ANCHOR & BASELINE ROLLOVER
 # ==========================================
 tuesday_rows = df[df.index.dayofweek == 1]
 
@@ -85,23 +83,49 @@ else:
     anchor_date = df.index[-7]
 
 anchor_str = anchor_date.strftime("%Y-%m-%d")
-
-# Check if Tuesday anchor shifted to a new week
-last_anchor = baselines_data.get("last_anchor", "")
-if last_anchor != anchor_str:
-    print(f"[INFO] New weekly anchor detected ({anchor_str}). Updating {BASELINES_FILE}...")
-    baselines_data["last_anchor"] = anchor_str
-    
-    # Save back to disk so baselines.json stays updated
-    with open(BASELINES_FILE, "w") as f:
-        json.dump(baselines_data, f, indent=4)
+last_anchor = baselines.get("last_anchor", "")
 
 d_tuesday_mops = df.loc[anchor_date, "d_php_l"]
 g_tuesday_mops = df.loc[anchor_date, "g_php_l"]
 k_tuesday_mops = df.loc[anchor_date, "k_php_l"]
 
+# Calculate latest daily movements relative to Tuesday anchor
+latest_d_delta = df.iloc[-1]["d_php_l"] - d_tuesday_mops
+latest_g_delta = df.iloc[-1]["g_php_l"] - g_tuesday_mops
+latest_k_delta = df.iloc[-1]["k_php_l"] - k_tuesday_mops
+
+# Execute Tuesday rollover if anchor changed
+if last_anchor != anchor_str:
+    print(f"[INFO] New Tuesday Anchor detected: {anchor_str}. Rolling historical arrays...")
+    
+    # Compute new baseline prices based on accumulated adjustment
+    new_diesel = round(baselines["current_diesel"] + latest_d_delta, 2)
+    new_gasoline = round(baselines["current_gasoline"] + latest_g_delta, 2)
+    new_kerosene = round(baselines["current_kerosene"] + latest_k_delta, 2)
+
+    # Update current baseline values
+    baselines["current_diesel"] = new_diesel
+    baselines["current_gasoline"] = new_gasoline
+    baselines["current_kerosene"] = new_kerosene
+
+    # Append new values & maintain sliding window of max 8 entries
+    baselines["historical_diesel"] = (baselines.get("historical_diesel", []) + [new_diesel])[-8:]
+    baselines["historical_gasoline"] = (baselines.get("historical_gasoline", []) + [new_gasoline])[-8:]
+    baselines["historical_kerosene"] = (baselines.get("historical_kerosene", []) + [new_kerosene])[-8:]
+
+    baselines["last_anchor"] = anchor_str
+
+    # Write updated baselines.json back to disk
+    with open(BASELINES_FILE, "w") as f:
+        json.dump(baselines, f, indent=4)
+    print(f"[SUCCESS] Updated {BASELINES_FILE} with new 8-week history.")
+
+base_diesel = float(baselines["current_diesel"])
+base_gas = float(baselines["current_gasoline"])
+base_kero = float(baselines["current_kerosene"])
+
 # ==========================================
-# 5. GENERATE DAILY TREND & DELTAS
+# 5. GENERATE DAILY TREND ARRAYS
 # ==========================================
 current_week_df = df[df.index >= anchor_date]
 
@@ -120,10 +144,6 @@ for date, row in current_week_df.iterrows():
     gasoline_trend.append(round(base_gas + g_mvt, 2))
     kerosene_trend.append(round(base_kero + k_mvt, 2))
 
-latest_d_delta = current_week_df.iloc[-1]["d_php_l"] - d_tuesday_mops
-latest_g_delta = current_week_df.iloc[-1]["g_php_l"] - g_tuesday_mops
-latest_k_delta = current_week_df.iloc[-1]["k_php_l"] - k_tuesday_mops
-
 def get_status(delta):
     if round(delta, 2) > 0.05:
         return "HIKE"
@@ -135,7 +155,7 @@ recent_forex_rates = df["forex"].iloc[-7:].round(2).tolist()
 forex_latest = round(float(df["forex"].iloc[-1]), 2)
 
 # ==========================================
-# 6. EXACT JSON SCHEMA REQUIRED BY INDEX.HTML
+# 6. OUTPUT JSON FOR INDEX.HTML
 # ==========================================
 output_payload = {
     "updated_at": current_pht.strftime("%B %d, %Y %I:%M %p PHT"),
@@ -174,4 +194,4 @@ output_payload = {
 with open(DATA_FILE, "w") as f:
     json.dump(output_payload, f, indent=4)
 
-print(f"[SUCCESS] {DATA_FILE} successfully generated for index.html compatibility.")
+print(f"[SUCCESS] {DATA_FILE} generated.")
