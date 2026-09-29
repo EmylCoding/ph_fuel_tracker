@@ -1,11 +1,14 @@
 import datetime
 import json
+import os
 import re
+
 from bs4 import BeautifulSoup
 import numpy as np
 import pandas as pd
 import requests
 import yfinance as yf
+
 
 def fetch_gaswatch_prices():
     """
@@ -40,6 +43,7 @@ def fetch_gaswatch_prices():
     except Exception as e:
         print(f"[ERROR] Failed to fetch GasWatch PH prices: {e}")
         return None, None
+
 
 def sync_baselines_with_gaswatch(base_data):
     """
@@ -99,6 +103,7 @@ def sync_baselines_with_gaswatch(base_data):
 
     return base_data
 
+
 def get_fuel_data():
     """
     Main execution function:
@@ -110,6 +115,29 @@ def get_fuel_data():
     # 1. Load baseline configuration and sync with GasWatch PH
     with open("baselines.json", "r") as f:
         base_data = json.load(f)
+
+    # If today is Tuesday, promote the previous projected values into the baseline
+    # before comparing with GasWatch PH. This reflects the "last week movement from Tuesday baseline"
+    # being carried into the new weekly baseline.
+    if current_pht.weekday() == 1 and os.path.exists("data.json"):
+        try:
+            with open("data.json", "r") as f:
+                last_payload = json.load(f)
+
+            last_diesel = last_payload.get("fuels", {}).get("diesel", {}).get("projected_pump_price")
+            last_gasoline = last_payload.get("fuels", {}).get("gasoline", {}).get("projected_pump_price")
+            last_kerosene = last_payload.get("fuels", {}).get("kerosene", {}).get("projected_pump_price")
+
+            if last_diesel is not None:
+                base_data["current_diesel"] = float(last_diesel)
+            if last_gasoline is not None:
+                base_data["current_gasoline"] = float(last_gasoline)
+            if last_kerosene is not None:
+                base_data["current_kerosene"] = float(last_kerosene)
+
+            print("[TUESDAY ROLLOVER] Promoted previous projected values into the current baseline.")
+        except Exception as e:
+            print(f"[WARNING] Failed to apply Tuesday rollover from data.json: {e}")
 
     base_data = sync_baselines_with_gaswatch(base_data)
 
@@ -171,13 +199,13 @@ def get_fuel_data():
     # 7. Generate Chart Trends Anchored to the Most Recent Tuesday
     d_7d = df["d_php_l"].tail(7).tolist()
     g_7d = df["g_php_l"].tail(7).tolist()
-    
+
     # Generate labels for the past 7 days up to today
     dates = [(current_pht - datetime.timedelta(days=i)).strftime("%b %d") for i in range(6, -1, -1)]
 
     # Locate the MOPS price proxy for the most recent Tuesday (pandas dayofweek == 1)
     tuesday_rows = df[df.index.dayofweek == 1]
-    
+
     if not tuesday_rows.empty:
         d_tuesday_mops = tuesday_rows["d_php_l"].iloc[-1]
         g_tuesday_mops = tuesday_rows["g_php_l"].iloc[-1]
@@ -188,17 +216,17 @@ def get_fuel_data():
 
     # Calculate actual trendlines mapping MOPS daily variance back to the official Tuesday pump baseline
     d_trend_7d = [
-        round(BASE_DIESEL + ((val - d_tuesday_mops) * m_diesel), 2) 
+        round(BASE_DIESEL + ((val - d_tuesday_mops) * m_diesel), 2)
         for val in d_7d
     ]
-    
+
     g_trend_7d = [
-        round(BASE_GASOLINE + ((val - g_tuesday_mops) * GASOLINE_DAMPENER), 2) 
+        round(BASE_GASOLINE + ((val - g_tuesday_mops) * GASOLINE_DAMPENER), 2)
         for val in g_7d
     ]
-    
+
     k_trend_7d = [
-        round(BASE_KEROSENE + ((val - d_tuesday_mops) * m_diesel * KEROSENE_FACTOR), 2) 
+        round(BASE_KEROSENE + ((val - d_tuesday_mops) * m_diesel * KEROSENE_FACTOR), 2)
         for val in d_7d
     ]
 
@@ -244,6 +272,7 @@ def get_fuel_data():
     # 9. Output to data.json for the front-end UI
     with open("data.json", "w") as f:
         json.dump(payload, f, indent=2)
+
 
 if __name__ == "__main__":
     get_fuel_data()
