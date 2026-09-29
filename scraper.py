@@ -41,22 +41,23 @@ def save_json(path, value):
 def extract_price(text, label):
     """
     Find a price after a GasWatch label.
-
-    Handles formats similar to:
+    
+    Handles formats like:
+        Avg. Diesel price is ₱95.95/L and unleaded is ₱89.55/L
         Avg. Diesel 95.95 PHP
-        AVG. DIESEL ₱95.95
-        Avg. Unleaded 89.55 PHP / liter
+        Average Diesel ₱95.95
     """
     pattern = rf"""
         {label}
-        \s*
+        .*?
+        (?:price\s+is\s+)?
         (?:₱|PHP)?\s*
         (?P<price>\d{{1,3}}(?:,\d{{3}})*\.\d{{1,2}})
         \s*
-        (?:PHP)? 
+        (?:PHP|/L)?
     """
 
-    match = re.search(pattern, text, flags=re.IGNORECASE | re.VERBOSE)
+    match = re.search(pattern, text, flags=re.IGNORECASE | re.VERBOSE | re.DOTALL)
     if not match:
         return None
 
@@ -87,21 +88,8 @@ def fetch_gaswatch_prices():
         kerosene = extract_price(text, r"Avg\.?\s*Kerosene")
 
         if diesel is None or gasoline is None:
-            # Useful fallback when the page contains unusual spacing or markup.
-            normalized_text = re.sub(r"\s+", " ", text)
-            diesel = diesel or extract_price(
-                normalized_text, r"Diesel"
-            )
-            gasoline = gasoline or extract_price(
-                normalized_text, r"Unleaded"
-            )
-            kerosene = kerosene or extract_price(
-                normalized_text, r"Kerosene"
-            )
-
-        if diesel is None or gasoline is None:
             print("[WARNING] GasWatch prices could not be parsed.")
-            print(f"[DEBUG] GasWatch text sample: {text[:500]}")
+            print(f"[DEBUG] Diesel found: {diesel}, Gasoline found: {gasoline}")
             return None, None, None
 
         print(
@@ -117,7 +105,6 @@ def fetch_gaswatch_prices():
     except Exception as error:
         print(f"[ERROR] GasWatch parsing failed: {error}")
         return None, None, None
-
 
 def sync_baselines_with_gaswatch(base_data):
     """
