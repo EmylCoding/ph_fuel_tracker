@@ -305,6 +305,9 @@ def build_trend(frame, base_data, now_pht):
     daily = frame[["d_php_l", "g_php_l", "forex"]].copy()
     daily.index = pd.to_datetime(daily.index).normalize()
 
+    # Remove duplicate dates, keeping the last occurrence
+    daily = daily[~daily.index.duplicated(keep='last')]
+
     today = now_pht.date()
     dates = pd.date_range(
         end=pd.Timestamp(today),
