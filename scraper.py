@@ -16,43 +16,9 @@ BASELINES_FILE = "baselines.json"
 DATA_FILE = "data.json"
 
 # ==========================================
-# 2. SLIDING WINDOW & BASELINE LOADER
+# 2. BASELINE LOADER
 # ==========================================
-def update_baseline_array(filepath, new_diesel=None, new_gas=None, new_kero=None, max_weeks=8):
-    """
-    Shifts the historical array by popping the oldest value (left) 
-    and appending the newest price (right) when a new Tuesday price is logged.
-    """
-    if not os.path.exists(filepath):
-        return
-
-    with open(filepath, "r") as f:
-        data = json.load(f)
-
-    updates = [
-        ("historical_diesel", new_diesel),
-        ("historical_gasoline", new_gas),
-        ("historical_kerosene", new_kero)
-    ]
-
-    modified = False
-    for key, new_val in updates:
-        if new_val is not None and key in data and isinstance(data[key], list):
-            data[key].append(float(new_val))
-            # Shift array if it exceeds max_weeks (removes index 0)
-            while len(data[key]) > max_weeks:
-                data[key].pop(0)
-            modified = True
-
-    if modified:
-        with open(filepath, "w") as f:
-            json.dump(data, f, indent=4)
-        print(f"[INFO] Updated {filepath} with new official baseline prices.")
-
 def load_baselines(filepath):
-    """
-    Reads baselines.json and extracts the latest price (index -1) from each historical array.
-    """
     default_data = {
         "historical_diesel": [93.50, 88.00, 91.00, 93.00, 88.00, 93.00, 97.11, 104.91],
         "historical_gasoline": [84.00, 78.50, 80.00, 81.00, 78.50, 82.50, 88.00, 92.59],
@@ -69,26 +35,23 @@ def load_baselines(filepath):
     else:
         data = default_data
 
-    def get_last_entry(data_dict, key, fallback):
-        arr = data_dict.get(key, [])
-        if isinstance(arr, list) and len(arr) > 0:
-            return float(arr[-1])
+    def get_last_entry(data_dict, array_key, single_key, fallback):
+        if array_key in data_dict and isinstance(data_dict[array_key], list) and len(data_dict[array_key]) > 0:
+            return float(data_dict[array_key][-1])
+        elif single_key in data_dict:
+            return float(data_dict[single_key])
         return float(fallback)
 
-    # Pulls the newest value at the end of the array (e.g., 104.91)
-    base_diesel = get_last_entry(data, "historical_diesel", 104.91)
-    base_gas = get_last_entry(data, "historical_gasoline", 92.59)
-    base_kero = get_last_entry(data, "historical_kerosene", 131.00)
+    base_diesel = get_last_entry(data, "historical_diesel", "current_diesel", 93.91)
+    base_gas = get_last_entry(data, "historical_gasoline", "current_gas", 87.16)
+    base_kero = get_last_entry(data, "historical_kerosene", "current_kero", 120.88)
 
     return data, base_diesel, base_gas, base_kero
 
-# Optional: To manually update/shift baseline when new GasWatch prices come in, call:
-# update_baseline_array(BASELINES_FILE, new_diesel=95.95, new_gas=88.50, new_kero=125.00)
-
 baselines_dict, base_diesel, base_gas, base_kero = load_baselines(BASELINES_FILE)
-print(f"[INFO] Active Baselines -> Diesel: ₱{base_diesel}, Gas: ₱{base_gas}, Kero: ₱{base_kero}")
+print(f"[INFO] Loaded Baselines -> Diesel: ₱{base_diesel}, Gas: ₱{base_gas}, Kero: ₱{base_kero}")
 
-# Model calibration multipliers
+# Multipliers for local station pricing adjustments
 M_DIESEL = 1.00
 M_GAS = 1.00
 M_KERO = 1.00
@@ -97,7 +60,7 @@ M_KERO = 1.00
 # 3. FETCH YFINANCE MARKET BENCHMARKS
 # ==========================================
 tickers = ["BZ=F", "RB=F", "HO=F", "PHP=X"]
-print("[INFO] Fetching market benchmark data...")
+print("[INFO] Downloading market data...")
 df_raw = yf.download(tickers=tickers, period="21d", interval="1d", progress=False)
 
 if isinstance(df_raw.columns, pd.MultiIndex):
@@ -117,9 +80,9 @@ df = pd.DataFrame({
     "brent": brent_series,
     "rbob": rbob_series,
     "ho": ho_series
-}).dropna()
+}).ffill().bfill()
 
-# Convert futures to estimated PHP/Liter
+# Unit Conversions to PHP / Liter
 df["d_php_l"] = (df["brent"] / 158.987) * df["forex"]
 df["g_php_l"] = (df["rbob"] / 3.78541) * df["forex"] if "rbob" in df else df["d_php_l"] * 0.90
 df["k_php_l"] = (df["ho"] / 3.78541) * df["forex"] if "ho" in df else df["d_php_l"] * 1.15
@@ -162,9 +125,13 @@ for date, row in current_week_df.iterrows():
 
     trend_data.append({
         "date": date.strftime("%Y-%m-%d"),
+        "diesel": round(daily_diesel_proj, 2),
+        "gasoline": round(daily_gas_proj, 2),
+        "kerosene": round(daily_kero_proj, 2),
         "diesel_proj": round(daily_diesel_proj, 2),
         "gas_proj": round(daily_gas_proj, 2),
         "kero_proj": round(daily_kero_proj, 2),
+        "kerosene_proj": round(daily_kero_proj, 2),
         "diesel_delta": round(d_mvt, 2),
         "gas_delta": round(g_mvt, 2),
         "kero_delta": round(k_mvt, 2)
@@ -179,10 +146,41 @@ forex_high = float(recent_forex.max())
 forex_low = float(recent_forex.min())
 
 # ==========================================
-# 6. OUTPUT TO DATA.JSON
+# 6. HYBRID OUTPUT PAYLOAD (PREVENTS FRONTEND CRASH)
 # ==========================================
 output_payload = {
+    # General Timestamp
     "updated_at": current_pht.strftime("%B %d, %Y %I:%M %p PHT"),
+    "last_updated": current_pht.strftime("%B %d, %Y %I:%M %p PHT"),
+    "anchor_date": anchor_date.strftime("%Y-%m-%d"),
+
+    # Flat Schema (For legacy frontend readers)
+    "baseline_diesel": base_diesel,
+    "baseline_gas": base_gas,
+    "baseline_kerosene": base_kero,
+    "current_diesel": base_diesel,
+    "current_gas": base_gas,
+    "current_gasoline": base_gas,
+    "current_kero": base_kero,
+    "current_kerosene": base_kero,
+
+    "projected_diesel": latest["diesel_proj"],
+    "projected_gas": latest["gas_proj"],
+    "projected_gasoline": latest["gas_proj"],
+    "projected_kero": latest["kero_proj"],
+    "projected_kerosene": latest["kero_proj"],
+
+    "expected_diesel": latest["diesel_delta"],
+    "expected_gas": latest["gas_delta"],
+    "expected_gasoline": latest["gas_delta"],
+    "expected_kero": latest["kero_delta"],
+    "expected_kerosene": latest["kero_delta"],
+
+    "forex_current": round(forex_latest, 2),
+    "forex_high": round(forex_high, 2),
+    "forex_low": round(forex_low, 2),
+
+    # Nested Schema (For structured frontend readers)
     "baselines": {
         "diesel": base_diesel,
         "gasoline": base_gas,
@@ -201,13 +199,16 @@ output_payload = {
     "forex": {
         "current": round(forex_latest, 2),
         "high_7d": round(forex_high, 2),
-        "low_7d": round(forex_low, 2)
+        "low_7d": round(forex_low, 2),
+        "high": round(forex_high, 2),
+        "low": round(forex_low, 2)
     },
-    "anchor_date": anchor_date.strftime("%Y-%m-%d"),
+
+    # Trend Array
     "trend": trend_data
 }
 
 with open(DATA_FILE, "w") as f:
     json.dump(output_payload, f, indent=4)
 
-print(f"[SUCCESS] {DATA_FILE} generated successfully.")
+print(f"[SUCCESS] {DATA_FILE} generated successfully with hybrid compatibility.")
