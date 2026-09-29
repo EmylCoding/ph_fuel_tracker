@@ -1,80 +1,83 @@
 {
-    "updated_at": "September 29, 2026 11:57 AM PHT",
-    "baselines": {
-        "diesel": 104.91,
-        "gasoline": 92.59,
-        "kerosene": 131.0
-    },
-    "projected": {
-        "diesel": 104.83,
-        "gasoline": 87.19,
-        "kerosene": 124.69
-    },
-    "expected_adjustment": {
-        "diesel": -0.08,
-        "gasoline": -5.4,
-        "kerosene": -6.31
+    "updated_at": "September 29, 2026 12:06 PM PHT",
+    "fuels": {
+        "diesel": {
+            "est_weekly_impact": 2.22,
+            "current_pump_price": 104.91,
+            "projected_pump_price": 107.13,
+            "status": "HIKE",
+            "dates": [
+                "Sep 22",
+                "Sep 23",
+                "Sep 24",
+                "Sep 25",
+                "Sep 28",
+                "Sep 29"
+            ],
+            "trend": [
+                104.91,
+                106.29,
+                107.84,
+                106.72,
+                107.1,
+                107.13
+            ]
+        },
+        "gasoline": {
+            "est_weekly_impact": -2.68,
+            "current_pump_price": 92.59,
+            "projected_pump_price": 89.91,
+            "status": "ROLLBACK",
+            "dates": [
+                "Sep 22",
+                "Sep 23",
+                "Sep 24",
+                "Sep 25",
+                "Sep 28",
+                "Sep 29"
+            ],
+            "trend": [
+                92.59,
+                94.05,
+                93.91,
+                90.78,
+                89.86,
+                89.91
+            ]
+        },
+        "kerosene": {
+            "est_weekly_impact": -3.38,
+            "current_pump_price": 131.0,
+            "projected_pump_price": 127.62,
+            "status": "ROLLBACK",
+            "dates": [
+                "Sep 22",
+                "Sep 23",
+                "Sep 24",
+                "Sep 25",
+                "Sep 28",
+                "Sep 29"
+            ],
+            "trend": [
+                131.0,
+                128.01,
+                127.55,
+                126.38,
+                127.55,
+                127.62
+            ]
+        }
     },
     "forex": {
-        "current": 62.41,
-        "high_7d": 62.88,
-        "low_7d": 62.37
-    },
-    "anchor_date": "2026-09-22",
-    "trend": [
-        {
-            "date": "2026-09-22",
-            "diesel_proj": 104.91,
-            "gas_proj": 92.59,
-            "kero_proj": 131.0,
-            "diesel_delta": 0.0,
-            "gas_delta": 0.0,
-            "kero_delta": 0.0
-        },
-        {
-            "date": "2026-09-23",
-            "diesel_proj": 106.29,
-            "gas_proj": 94.05,
-            "kero_proj": 128.01,
-            "diesel_delta": 1.38,
-            "gas_delta": 1.46,
-            "kero_delta": -2.99
-        },
-        {
-            "date": "2026-09-24",
-            "diesel_proj": 107.84,
-            "gas_proj": 93.91,
-            "kero_proj": 127.55,
-            "diesel_delta": 2.93,
-            "gas_delta": 1.32,
-            "kero_delta": -3.45
-        },
-        {
-            "date": "2026-09-25",
-            "diesel_proj": 106.72,
-            "gas_proj": 90.78,
-            "kero_proj": 126.38,
-            "diesel_delta": 1.81,
-            "gas_delta": -1.81,
-            "kero_delta": -4.62
-        },
-        {
-            "date": "2026-09-28",
-            "diesel_proj": 104.81,
-            "gas_proj": 87.15,
-            "kero_proj": 124.63,
-            "diesel_delta": -0.1,
-            "gas_delta": -5.44,
-            "kero_delta": -6.37
-        },
-        {
-            "date": "2026-09-29",
-            "diesel_proj": 104.83,
-            "gas_proj": 87.19,
-            "kero_proj": 124.69,
-            "diesel_delta": -0.08,
-            "gas_delta": -5.4,
-            "kero_delta": -6.31
-        }
-    ]
+        "current": 62.43,
+        "rates": [
+            62.88,
+            62.65,
+            62.46,
+            62.7,
+            62.37,
+            62.37,
+            62.43
+        ]
+    }
 }
