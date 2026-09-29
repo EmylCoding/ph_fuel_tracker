@@ -4,293 +4,296 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PH Fuel Price Monitor</title>
-    <!-- Tailwind CSS -->
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #F4F6F9;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
         }
-        .solis-card {
-            background-color: #FFFFFF;
-            border-radius: 20px;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-            border: 1px solid rgba(226, 232, 240, 0.6);
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
         }
     </style>
 </head>
-<body class="text-slate-800 p-4 md:p-10 min-h-screen">
+<body class="min-h-screen px-4 py-8 text-slate-800 md:px-10">
 
-    <div class="max-w-7xl mx-auto space-y-6">
-        
-        <!-- Top Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+    <main class="mx-auto max-w-6xl space-y-6">
+
+        <header class="flex flex-col gap-2 border-b border-slate-200 pb-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800">PH Fuel Price Monitor</h1>
-                <p class="text-sm text-slate-500 mt-1">Projected Weekly Adjustments & Market Benchmarks</p>
-            </div>
-            <div class="bg-white px-4 py-2 rounded-full border border-slate-200 shadow-sm flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" id="status-indicator"></div>
-                <span class="text-sm font-medium text-slate-600" id="last-updated">Fetching latest data...</span>
-            </div>
-        </div>
-
-        <!-- Metric Cards Grid (Diesel, Gasoline, Kerosene, Forex) -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            <!-- Diesel Card -->
-            <div class="solis-card p-6">
-                <div class="flex justify-between items-start mb-4">
-                    <h3 class="text-slate-500 font-medium">Diesel</h3>
-                    <span id="diesel-badge" class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-xs font-semibold tracking-wide">--</span>
-                </div>
-                <div class="flex items-baseline gap-2 mb-6">
-                    <span class="text-3xl font-bold text-slate-800" id="diesel-impact">₱0.00</span>
-                    <span class="text-slate-400 font-medium text-xs">/L expected</span>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center text-xs sm:text-sm">
-                        <span class="text-slate-400">Current Pump Avg</span>
-                        <span class="font-semibold text-slate-700" id="diesel-current">₱0.00</span>
-                    </div>
-                    <div class="w-full h-px bg-slate-100"></div>
-                    <div class="flex justify-between items-center text-xs sm:text-sm">
-                        <span class="text-slate-400">Projected Station</span>
-                        <span class="font-semibold text-slate-700" id="diesel-projected">₱0.00</span>
-                    </div>
-                </div>
+                <h1 class="text-2xl font-bold">PH Fuel Price Monitor</h1>
+                <p class="mt-1 text-sm text-slate-500">
+                    Weekly fuel-price estimates based on GasWatch PH and market data
+                </p>
             </div>
 
-            <!-- Gasoline Card -->
-            <div class="solis-card p-6">
-                <div class="flex justify-between items-start mb-4">
-                    <h3 class="text-slate-500 font-medium">Gasoline</h3>
-                    <span id="gasoline-badge" class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-xs font-semibold tracking-wide">--</span>
+            <p id="last-updated" class="text-sm text-slate-500">
+                Loading data...
+            </p>
+        </header>
+
+        <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+            <article class="card p-5">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-semibold">Diesel</h2>
+                    <span id="diesel-badge" class="text-xs font-semibold text-slate-500">
+                        --
+                    </span>
                 </div>
-                <div class="flex items-baseline gap-2 mb-6">
-                    <span class="text-3xl font-bold text-slate-800" id="gasoline-impact">₱0.00</span>
-                    <span class="text-slate-400 font-medium text-xs">/L expected</span>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center text-xs sm:text-sm">
-                        <span class="text-slate-400">Current Pump Avg</span>
-                        <span class="font-semibold text-slate-700" id="gasoline-current">₱0.00</span>
+
+                <p id="diesel-impact" class="mt-5 text-3xl font-bold">
+                    ₱0.00
+                </p>
+                <p class="text-xs text-slate-500">Estimated weekly movement per liter</p>
+
+                <dl class="mt-5 space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <dt class="text-slate-500">Current average</dt>
+                        <dd id="diesel-current" class="font-semibold">₱0.00</dd>
                     </div>
-                    <div class="w-full h-px bg-slate-100"></div>
-                    <div class="flex justify-between items-center text-xs sm:text-sm">
-                        <span class="text-slate-400">Projected Station</span>
-                        <span class="font-semibold text-slate-700" id="gasoline-projected">₱0.00</span>
+                    <div class="flex justify-between">
+                        <dt class="text-slate-500">Projected price</dt>
+                        <dd id="diesel-projected" class="font-semibold">₱0.00</dd>
                     </div>
+                </dl>
+            </article>
+
+            <article class="card p-5">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-semibold">Gasoline</h2>
+                    <span id="gasoline-badge" class="text-xs font-semibold text-slate-500">
+                        --
+                    </span>
                 </div>
+
+                <p id="gasoline-impact" class="mt-5 text-3xl font-bold">
+                    ₱0.00
+                </p>
+                <p class="text-xs text-slate-500">Estimated weekly movement per liter</p>
+
+                <dl class="mt-5 space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <dt class="text-slate-500">Current average</dt>
+                        <dd id="gasoline-current" class="font-semibold">₱0.00</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-slate-500">Projected price</dt>
+                        <dd id="gasoline-projected" class="font-semibold">₱0.00</dd>
+                    </div>
+                </dl>
+            </article>
+
+            <article class="card p-5">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-semibold">Kerosene</h2>
+                    <span id="kerosene-badge" class="text-xs font-semibold text-slate-500">
+                        --
+                    </span>
+                </div>
+
+                <p id="kerosene-impact" class="mt-5 text-3xl font-bold">
+                    ₱0.00
+                </p>
+                <p class="text-xs text-slate-500">Estimated weekly movement per liter</p>
+
+                <dl class="mt-5 space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <dt class="text-slate-500">Current average</dt>
+                        <dd id="kerosene-current" class="font-semibold">₱0.00</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-slate-500">Projected price</dt>
+                        <dd id="kerosene-projected" class="font-semibold">₱0.00</dd>
+                    </div>
+                </dl>
+            </article>
+
+            <article class="card p-5">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-semibold">USD / PHP</h2>
+                    <span class="text-xs font-semibold text-slate-500">FX</span>
+                </div>
+
+                <p id="forex-current" class="mt-5 text-3xl font-bold">
+                    ₱0.00
+                </p>
+                <p class="text-xs text-slate-500">Current exchange rate</p>
+
+                <dl class="mt-5 space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <dt class="text-slate-500">7-day high</dt>
+                        <dd id="forex-high" class="font-semibold">₱0.00</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="text-slate-500">7-day low</dt>
+                        <dd id="forex-low" class="font-semibold">₱0.00</dd>
+                    </div>
+                </dl>
+            </article>
+
+        </section>
+
+        <section class="card p-5">
+            <div class="mb-5">
+                <h2 class="text-lg font-bold">Seven-Day Fuel Trend</h2>
+                <p class="mt-1 text-sm text-slate-500">
+                    Estimated pump-price movement based on market proxies
+                </p>
             </div>
 
-            <!-- Kerosene Card -->
-            <div class="solis-card p-6">
-                <div class="flex justify-between items-start mb-4">
-                    <h3 class="text-slate-500 font-medium">Kerosene</h3>
-                    <span id="kerosene-badge" class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-xs font-semibold tracking-wide">--</span>
-                </div>
-                <div class="flex items-baseline gap-2 mb-6">
-                    <span class="text-3xl font-bold text-slate-800" id="kerosene-impact">₱0.00</span>
-                    <span class="text-slate-400 font-medium text-xs">/L expected</span>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center text-xs sm:text-sm">
-                        <span class="text-slate-400">Current Pump Avg</span>
-                        <span class="font-semibold text-slate-700" id="kerosene-current">₱0.00</span>
-                    </div>
-                    <div class="w-full h-px bg-slate-100"></div>
-                    <div class="flex justify-between items-center text-xs sm:text-sm">
-                        <span class="text-slate-400">Projected Station</span>
-                        <span class="font-semibold text-slate-700" id="kerosene-projected">₱0.00</span>
-                    </div>
-                </div>
+            <div class="h-80">
+                <canvas id="trend-chart"></canvas>
             </div>
+        </section>
 
-            <!-- Forex Exchange Card -->
-            <div class="solis-card p-6">
-                <div class="flex justify-between items-start mb-4">
-                    <h3 class="text-slate-500 font-medium">USD / PHP Forex</h3>
-                    <span class="px-3 py-1 bg-amber-50 text-amber-600 border border-amber-100 rounded-lg text-xs font-bold tracking-wide">FX RATE</span>
-                </div>
-                <div class="flex items-baseline gap-2 mb-6">
-                    <span class="text-3xl font-bold text-slate-800" id="forex-current">₱0.00</span>
-                    <span class="text-slate-400 font-medium text-xs">/ USD</span>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center text-xs sm:text-sm">
-                        <span class="text-slate-400">7-Day High</span>
-                        <span class="font-semibold text-slate-700" id="forex-high">₱0.00</span>
-                    </div>
-                    <div class="w-full h-px bg-slate-100"></div>
-                    <div class="flex justify-between items-center text-xs sm:text-sm">
-                        <span class="text-slate-400">7-Day Low</span>
-                        <span class="font-semibold text-slate-700" id="forex-low">₱0.00</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Chart Section -->
-        <div class="solis-card p-6 mt-6">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-800">Fuel Trading Trend</h2>
-                    <p class="text-xs text-slate-400 mt-1">7-day MOPS benchmark movement</p>
-                </div>
-                
-                <div class="flex space-x-1 bg-slate-50/80 p-1 rounded-lg border border-slate-100">
-                    <button class="px-4 py-1.5 bg-[#FFF0E5] text-[#F97316] rounded-md text-sm font-semibold shadow-sm">Week</button>
-                    <button class="px-4 py-1.5 text-slate-400 hover:text-slate-600 rounded-md text-sm font-medium transition-colors">Month</button>
-                </div>
-            </div>
-            
-            <div class="relative h-80 w-full">
-                <canvas id="trendChart"></canvas>
-            </div>
-        </div>
-
-    </div>
+    </main>
 
     <script>
-        document.addEventListener("DOMContentLoaded", async () => {
-            try {
-              const response = await fetch(`data.json?t=${Date.now()}`, { cache: 'no-store' });
-                if (!response.ok) throw new Error('data.json not found');
-                const data = await response.json();
-                
-                document.getElementById('last-updated').textContent = `Updated: ${data.updated_at || 'Recently'}`;
+        const peso = (value) => `₱${Number(value || 0).toFixed(2)}`;
 
-                const formatImpact = (val) => `₱${Math.abs(val || 0).toFixed(2)}`;
-                const formatPrice = (val) => `₱${(val || 0).toFixed(2)} /L`;
-                
-                const setCardData = (type, fuel) => {
-                    if (!fuel) return;
-                    document.getElementById(`${type}-impact`).textContent = formatImpact(fuel.est_weekly_impact);
-                    document.getElementById(`${type}-current`).textContent = formatPrice(fuel.current_pump_price);
-                    document.getElementById(`${type}-projected`).textContent = formatPrice(fuel.projected_pump_price);
-                    
-                    const badge = document.getElementById(`${type}-badge`);
-                    if (fuel.status === 'ROLLBACK') {
-                        badge.className = 'px-3 py-1 bg-emerald-50 text-emerald-600 border border-emerald-100 rounded-lg text-xs font-bold tracking-wide';
-                        badge.textContent = `▼ ROLLBACK`;
-                    } else if (fuel.status === 'HIKE') {
-                        badge.className = 'px-3 py-1 bg-rose-50 text-rose-600 border border-rose-100 rounded-lg text-xs font-bold tracking-wide';
-                        badge.textContent = `▲ HIKE`;
-                    } else {
-                        badge.className = 'px-3 py-1 bg-slate-100 text-slate-500 border border-slate-200 rounded-lg text-xs font-bold tracking-wide';
-                        badge.textContent = `NO CHANGE`;
-                    }
-                };
+        function setBadge(element, status) {
+            element.textContent = status || "NO CHANGE";
 
-                // Map keys with backwards compatibility
-                const dieselFuel = data.fuels.diesel;
-                const gasolineFuel = data.fuels.gasoline || data.fuels.unleaded;
-                const keroseneFuel = data.fuels.kerosene || data.fuels.premium;
+            if (status === "HIKE") {
+                element.className = "text-xs font-semibold text-red-600";
+            } else if (status === "ROLLBACK") {
+                element.className = "text-xs font-semibold text-green-600";
+            } else {
+                element.className = "text-xs font-semibold text-slate-500";
+            }
+        }
 
-                setCardData('diesel', dieselFuel);
-                setCardData('gasoline', gasolineFuel);
-                setCardData('kerosene', keroseneFuel);
+        function setFuelCard(type, fuel) {
+            if (!fuel) {
+                return;
+            }
 
-                if (data.forex) {
-                    document.getElementById('forex-current').textContent = `₱${(data.forex.current || 0).toFixed(2)}`;
-                    const rates = data.forex.rates || [data.forex.current || 0];
-                    document.getElementById('forex-high').textContent = `₱${Math.max(...rates).toFixed(2)}`;
-                    document.getElementById('forex-low').textContent = `₱${Math.min(...rates).toFixed(2)}`;
-                }
+            document.getElementById(`${type}-impact`).textContent =
+                `${fuel.est_weekly_impact >= 0 ? "+" : ""}${peso(fuel.est_weekly_impact)}`;
 
-                // Extract trends safely
-                const dates = dieselFuel?.dates || [];
-                const dieselTrend = dieselFuel?.trend || [];
-                const gasolineTrend = gasolineFuel?.trend || [];
-                const keroseneTrend = keroseneFuel?.trend || [];
+            document.getElementById(`${type}-current`).textContent =
+                `${peso(fuel.current_pump_price)} /L`;
 
-                const ctx = document.getElementById('trendChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: dates,
-                        datasets: [
-                            {
-                                label: 'Diesel',
-                                data: dieselTrend,
-                                borderColor: '#8B5CF6',
-                                borderWidth: 3,
-                                tension: 0.4,
-                                pointBackgroundColor: '#FFFFFF',
-                                pointBorderColor: '#8B5CF6',
-                                pointBorderWidth: 2,
-                                pointRadius: 4
-                            },
-                            {
-                                label: 'Gasoline',
-                                data: gasolineTrend,
-                                borderColor: '#3B82F6',
-                                borderWidth: 3,
-                                tension: 0.4,
-                                pointBackgroundColor: '#FFFFFF',
-                                pointBorderColor: '#3B82F6',
-                                pointBorderWidth: 2,
-                                pointRadius: 4
-                            },
-                            {
-                                label: 'Kerosene',
-                                data: keroseneTrend,
-                                borderColor: '#F97316',
-                                borderWidth: 3,
-                                tension: 0.4,
-                                pointBackgroundColor: '#FFFFFF',
-                                pointBorderColor: '#F97316',
-                                pointBorderWidth: 2,
-                                pointRadius: 4
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        interaction: { mode: 'index', intersect: false },
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                                align: 'start',
-                                labels: { usePointStyle: true, boxWidth: 8, font: { family: 'Inter', size: 13, weight: '500' }, color: '#64748b' }
-                            },
-                            tooltip: {
-                                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                                titleColor: '#1e293b',
-                                bodyColor: '#475569',
-                                borderColor: '#e2e8f0',
-                                borderWidth: 1,
-                                padding: 12,
-                                usePointStyle: true
-                            }
+            document.getElementById(`${type}-projected`).textContent =
+                `${peso(fuel.projected_pump_price)} /L`;
+
+            setBadge(
+                document.getElementById(`${type}-badge`),
+                fuel.status
+            );
+        }
+
+        function createChart(data) {
+            const diesel = data.fuels.diesel;
+            const gasoline = data.fuels.gasoline;
+            const kerosene = data.fuels.kerosene;
+
+            new Chart(document.getElementById("trend-chart"), {
+                type: "line",
+                data: {
+                    labels: diesel.dates || [],
+                    datasets: [
+                        {
+                            label: "Diesel",
+                            data: diesel.trend || [],
+                            borderColor: "#1d4ed8",
+                            backgroundColor: "rgba(29, 78, 216, 0.08)",
+                            borderWidth: 2,
+                            tension: 0.25
                         },
-                        scales: {
-                            y: {
-                                border: { display: false },
-                                grid: { color: '#f1f5f9' },
-                                ticks: { color: '#94a3b8', font: { family: 'Inter', size: 12 }, callback: (v) => '₱' + v }
-                            },
-                            x: {
-                                border: { display: false },
-                                grid: { display: false },
-                                ticks: { color: '#94a3b8', font: { family: 'Inter', size: 12 } }
+                        {
+                            label: "Gasoline",
+                            data: gasoline.trend || [],
+                            borderColor: "#16a34a",
+                            backgroundColor: "rgba(22, 163, 74, 0.08)",
+                            borderWidth: 2,
+                            tension: 0.25
+                        },
+                        {
+                            label: "Kerosene",
+                            data: kerosene.trend || [],
+                            borderColor: "#ea580c",
+                            backgroundColor: "rgba(234, 88, 12, 0.08)",
+                            borderWidth: 2,
+                            tension: 0.25
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: "index",
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: "top",
+                            align: "start"
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) =>
+                                    `${context.dataset.label}: ${peso(context.raw)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: {
+                                callback: (value) => `₱${value}`
                             }
                         }
                     }
-                });
-            } catch (error) {
-                console.error('Error loading fuel data:', error);
-                document.getElementById('last-updated').textContent = 'Error loading data.json';
-                document.getElementById('status-indicator').className = 'w-2 h-2 rounded-full bg-rose-500';
+                }
+            });
+        }
+
+        async function loadFuelData() {
+            const response = await fetch(`data.json?t=${Date.now()}`, {
+                cache: "no-store"
+            });
+
+            if (!response.ok) {
+                throw new Error("data.json could not be loaded");
             }
+
+            const data = await response.json();
+
+            document.getElementById("last-updated").textContent =
+                `Updated ${data.updated_at || "recently"}`;
+
+            setFuelCard("diesel", data.fuels.diesel);
+            setFuelCard("gasoline", data.fuels.gasoline);
+            setFuelCard("kerosene", data.fuels.kerosene);
+
+            if (data.forex) {
+                const rates = data.forex.rates || [data.forex.current || 0];
+
+                document.getElementById("forex-current").textContent =
+                    peso(data.forex.current);
+
+                document.getElementById("forex-high").textContent =
+                    peso(Math.max(...rates));
+
+                document.getElementById("forex-low").textContent =
+                    peso(Math.min(...rates));
+            }
+
+            createChart(data);
+        }
+
+        loadFuelData().catch((error) => {
+            console.error(error);
+            document.getElementById("last-updated").textContent =
+                "Unable to load current data";
         });
     </script>
 </body>
