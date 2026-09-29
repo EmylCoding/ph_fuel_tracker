@@ -1,11 +1,11 @@
 {
-    "updated_at": "September 29, 2026 12:06 PM PHT",
+    "updated_at": "September 29, 2026 12:17 PM PHT",
     "fuels": {
         "diesel": {
-            "est_weekly_impact": 2.22,
+            "est_weekly_impact": 0.03,
             "current_pump_price": 104.91,
-            "projected_pump_price": 107.13,
-            "status": "HIKE",
+            "projected_pump_price": 104.94,
+            "status": "NO CHANGE",
             "dates": [
                 "Sep 22",
                 "Sep 23",
@@ -20,13 +20,13 @@
                 107.84,
                 106.72,
                 107.1,
-                107.13
+                104.94
             ]
         },
         "gasoline": {
-            "est_weekly_impact": -2.68,
+            "est_weekly_impact": -5.33,
             "current_pump_price": 92.59,
-            "projected_pump_price": 89.91,
+            "projected_pump_price": 87.26,
             "status": "ROLLBACK",
             "dates": [
                 "Sep 22",
@@ -42,7 +42,7 @@
                 93.91,
                 90.78,
                 89.86,
-                89.91
+                87.26
             ]
         },
         "kerosene": {
