@@ -1,15 +1,15 @@
 {
-  "updated_at": "September 29, 2026 03:38 AM PHT",
+  "updated_at": "September 29, 2026 10:35 AM PHT",
   "forex": {
-    "current": 62.45,
+    "current": 62.39,
     "rates": [
-      62.46,
       62.7,
       62.7,
       62.37,
       62.37,
-      62.45,
-      62.45
+      62.37,
+      62.37,
+      62.39
     ],
     "trend_dates": [
       "Sep 23",
@@ -25,17 +25,17 @@
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 104.91,
-      "est_weekly_impact": -11.19,
-      "projected_pump_price": 93.72,
+      "est_weekly_impact": -11.0,
+      "projected_pump_price": 93.91,
       "status": "ROLLBACK",
       "trend": [
-        95.11,
-        95.21,
-        94.96,
-        94.83,
-        94.58,
-        94.62,
-        93.72
+        104.12,
+        103.87,
+        103.73,
+        103.49,
+        103.49,
+        102.81,
+        102.82
       ],
       "dates": [
         "Sep 23",
@@ -50,17 +50,17 @@
     "gasoline": {
       "name": "Gasoline",
       "current_pump_price": 92.59,
-      "est_weekly_impact": -5.36,
-      "projected_pump_price": 87.23,
+      "est_weekly_impact": -5.43,
+      "projected_pump_price": 87.16,
       "status": "ROLLBACK",
       "trend": [
-        92.59,
-        92.81,
-        92.45,
-        92.15,
-        89.47,
-        89.54,
-        85.97
+        94.37,
+        94.02,
+        93.72,
+        91.03,
+        91.03,
+        87.45,
+        87.47
       ],
       "dates": [
         "Sep 23",
@@ -75,17 +75,17 @@
     "kerosene": {
       "name": "Kerosene",
       "current_pump_price": 131.0,
-      "est_weekly_impact": -10.29,
-      "projected_pump_price": 120.71,
+      "est_weekly_impact": -10.12,
+      "projected_pump_price": 120.88,
       "status": "ROLLBACK",
       "trend": [
-        121.98,
-        122.08,
-        121.85,
-        121.73,
-        121.5,
-        121.53,
-        120.71
+        130.27,
+        130.04,
+        129.92,
+        129.69,
+        129.69,
+        129.07,
+        129.08
       ],
       "dates": [
         "Sep 23",
