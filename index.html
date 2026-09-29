@@ -19,6 +19,15 @@
             border: 1px solid #e2e8f0;
             border-radius: 12px;
         }
+
+        .color-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 6px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body class="min-h-screen px-4 py-8 text-slate-800 md:px-10">
@@ -42,7 +51,10 @@
 
             <article class="card p-5">
                 <div class="flex items-center justify-between">
-                    <h2 class="font-semibold">Diesel</h2>
+                    <h2 class="font-semibold flex items-center">
+                        <span class="color-indicator" style="background-color: #1d4ed8;"></span>
+                        Diesel
+                    </h2>
                     <span id="diesel-badge" class="text-xs font-semibold text-slate-500">
                         --
                     </span>
@@ -67,7 +79,10 @@
 
             <article class="card p-5">
                 <div class="flex items-center justify-between">
-                    <h2 class="font-semibold">Gasoline</h2>
+                    <h2 class="font-semibold flex items-center">
+                        <span class="color-indicator" style="background-color: #16a34a;"></span>
+                        Gasoline
+                    </h2>
                     <span id="gasoline-badge" class="text-xs font-semibold text-slate-500">
                         --
                     </span>
@@ -92,7 +107,10 @@
 
             <article class="card p-5">
                 <div class="flex items-center justify-between">
-                    <h2 class="font-semibold">Kerosene</h2>
+                    <h2 class="font-semibold flex items-center">
+                        <span class="color-indicator" style="background-color: #ea580c;"></span>
+                        Kerosene
+                    </h2>
                     <span id="kerosene-badge" class="text-xs font-semibold text-slate-500">
                         --
                     </span>
@@ -236,7 +254,8 @@
                     plugins: {
                         legend: {
                             position: "top",
-                            align: "start"
+                            align: "start",
+                            padding: 20
                         },
                         tooltip: {
                             callbacks: {
