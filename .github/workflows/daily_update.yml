@@ -23,12 +23,9 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install yfinance pandas numpy requests
+          pip install yfinance pandas numpy requests beautifulsoup4
 
-      - name: Sync Baselines from GasWatch PH
-        run: python fetch_gaswatch.py
-
-      - name: Run Market Forecasting Scraper
+      - name: Run Fuel Price Scraper
         run: python scraper.py
 
       - name: Commit and Push Updated State Files
