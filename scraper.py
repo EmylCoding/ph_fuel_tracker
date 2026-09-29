@@ -35,29 +35,31 @@ def save_json(path, value):
     with path.open("w", encoding="utf-8") as f:
         json.dump(value, f, indent=2)
 
-
 def extract_price(text, label):
     """
-    Extract official average price text from GasWatch sentence.
-
-    Handles examples like:
-      average diesel price is ₱95.95/L
-      Avg. Unleaded 89.55 PHP
-      avg unleaded price is 89.55 PHP / liter
+    Extract the OFFICIAL average price from the sentence structure:
+      "average diesel price is ₱95.95/L"
+    
+    This avoids matching weekly changes like "-₱7.57".
     """
     pattern = rf"""
+        average
+        \s+
         {label}
-        .*?
-        (?:price\s+is\s+)?
-        (?:₱|PHP)?
+        \s+
+        price
+        \s+
+        is
+        \s+
+        (?:₱|PHP)
         \s*
         (?P<price>\d{{1,3}}(?:,\d{{3}})*\.\d{{1,2}})
-        \s*
-        (?:PHP|/L|per\s*liter)?
     """
-    match = re.search(pattern, text, flags=re.IGNORECASE | re.VERBOSE | re.DOTALL)
+    
+    match = re.search(pattern, text, flags=re.IGNORECASE | re.VERBOSE)
     if not match:
         return None
+    
     return float(match.group("price").replace(",", ""))
 
 
