@@ -1,16 +1,16 @@
 {
-  "updated_at": "September 29, 2026 02:22 PM PHT",
+  "updated_at": "September 29, 2026 02:26 PM PHT",
   "source": "GasWatch PH and Yahoo Finance market proxies",
   "forex": {
-    "current": 62.47,
+    "current": 62.49,
     "rates": [
       62.7,
       62.37,
       62.37,
       62.37,
       62.37,
-      62.47,
-      62.47
+      62.49,
+      62.49
     ],
     "trend_dates": [
       "Sep 23",
@@ -31,11 +31,11 @@
       "status": "HIKE",
       "trend": [
         11.96,
-        10.63,
-        9.79,
-        9.79,
-        9.79,
-        11.24,
+        10.64,
+        9.8,
+        9.8,
+        9.8,
+        11.27,
         7.57
       ],
       "dates": [
@@ -51,15 +51,15 @@
     "gasoline": {
       "name": "Gasoline",
       "current_pump_price": 7.57,
-      "est_weekly_impact": -3.54,
-      "projected_pump_price": 4.03,
+      "est_weekly_impact": -3.53,
+      "projected_pump_price": 4.04,
       "status": "ROLLBACK",
       "trend": [
-        14.31,
-        13.65,
-        10.97,
-        10.97,
-        10.97,
+        14.29,
+        13.64,
+        10.95,
+        10.95,
+        10.96,
         10.18,
         7.57
       ],
@@ -82,10 +82,10 @@
       "trend": [
         9.89,
         8.67,
-        7.89,
-        7.89,
-        7.89,
-        9.23,
+        7.9,
+        7.9,
+        7.9,
+        9.25,
         5.85
       ],
       "dates": [
