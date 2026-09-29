@@ -1,7 +1,6 @@
 import json
 import os
 from datetime import datetime
-import numpy as np
 import pandas as pd
 import pytz
 import yfinance as yf
@@ -15,52 +14,36 @@ current_pht = datetime.now(pht)
 BASELINES_FILE = "baselines.json"
 DATA_FILE = "data.json"
 
+# Default baseline fallback values
+default_baselines = {
+    "last_anchor": "",
+    "current_diesel": 58.50,
+    "current_gasoline": 62.00,
+    "current_kerosene": 70.00
+}
+
 # ==========================================
-# 2. BASELINE LOADER
+# 2. LOAD & AUTO-UPDATE BASELINES
 # ==========================================
-def load_baselines(filepath):
-    default_data = {
-        "historical_diesel": [93.50, 88.00, 91.00, 93.00, 88.00, 93.00, 97.11, 104.91],
-        "historical_gasoline": [84.00, 78.50, 80.00, 81.00, 78.50, 82.50, 88.00, 92.59],
-        "historical_kerosene": [119.80, 114.00, 117.20, 119.50, 114.33, 119.91, 124.53, 131.00]
-    }
+if os.path.exists(BASELINES_FILE):
+    try:
+        with open(BASELINES_FILE, "r") as f:
+            baselines_data = json.load(f)
+    except Exception as e:
+        print(f"[WARN] Failed to read {BASELINES_FILE}, fallback to defaults: {e}")
+        baselines_data = default_baselines
+else:
+    baselines_data = default_baselines
 
-    if os.path.exists(filepath):
-        try:
-            with open(filepath, "r") as f:
-                data = json.load(f)
-        except Exception as e:
-            print(f"[WARN] Failed to load {filepath}: {e}")
-            data = default_data
-    else:
-        data = default_data
-
-    def get_last_entry(data_dict, array_key, single_key, fallback):
-        if array_key in data_dict and isinstance(data_dict[array_key], list) and len(data_dict[array_key]) > 0:
-            return float(data_dict[array_key][-1])
-        elif single_key in data_dict:
-            return float(data_dict[single_key])
-        return float(fallback)
-
-    base_diesel = get_last_entry(data, "historical_diesel", "current_diesel", 93.91)
-    base_gas = get_last_entry(data, "historical_gasoline", "current_gas", 87.16)
-    base_kero = get_last_entry(data, "historical_kerosene", "current_kero", 120.88)
-
-    return data, base_diesel, base_gas, base_kero
-
-baselines_dict, base_diesel, base_gas, base_kero = load_baselines(BASELINES_FILE)
-print(f"[INFO] Loaded Baselines -> Diesel: ₱{base_diesel}, Gas: ₱{base_gas}, Kero: ₱{base_kero}")
-
-# Multipliers for local station pricing adjustments
-M_DIESEL = 1.00
-M_GAS = 1.00
-M_KERO = 1.00
+base_diesel = float(baselines_data.get("current_diesel", 58.50))
+base_gas = float(baselines_data.get("current_gasoline", 62.00))
+base_kero = float(baselines_data.get("current_kerosene", 70.00))
 
 # ==========================================
 # 3. FETCH YFINANCE MARKET BENCHMARKS
 # ==========================================
 tickers = ["BZ=F", "RB=F", "HO=F", "PHP=X"]
-print("[INFO] Downloading market data...")
+print("[INFO] Fetching market data...")
 df_raw = yf.download(tickers=tickers, period="21d", interval="1d", progress=False)
 
 if isinstance(df_raw.columns, pd.MultiIndex):
@@ -82,15 +65,14 @@ df = pd.DataFrame({
     "ho": ho_series
 }).ffill().bfill()
 
-# Unit Conversions to PHP / Liter
+# Unit conversions to PHP / Liter
 df["d_php_l"] = (df["brent"] / 158.987) * df["forex"]
-df["g_php_l"] = (df["rbob"] / 3.78541) * df["forex"] if "rbob" in df else df["d_php_l"] * 0.90
-df["k_php_l"] = (df["ho"] / 3.78541) * df["forex"] if "ho" in df else df["d_php_l"] * 1.15
-
+df["g_php_l"] = (df["rbob"] / 3.78541) * df["forex"]
+df["k_php_l"] = (df["ho"] / 3.78541) * df["forex"]
 df.index = pd.to_datetime(df.index)
 
 # ==========================================
-# 4. DETERMINE TUESDAY ANCHOR
+# 4. DETERMINE TUESDAY ANCHOR & SAVE BASELINE
 # ==========================================
 tuesday_rows = df[df.index.dayofweek == 1]
 
@@ -102,113 +84,94 @@ if not tuesday_rows.empty:
 else:
     anchor_date = df.index[-7]
 
+anchor_str = anchor_date.strftime("%Y-%m-%d")
+
+# Check if Tuesday anchor shifted to a new week
+last_anchor = baselines_data.get("last_anchor", "")
+if last_anchor != anchor_str:
+    print(f"[INFO] New weekly anchor detected ({anchor_str}). Updating {BASELINES_FILE}...")
+    baselines_data["last_anchor"] = anchor_str
+    
+    # Save back to disk so baselines.json stays updated
+    with open(BASELINES_FILE, "w") as f:
+        json.dump(baselines_data, f, indent=4)
+
 d_tuesday_mops = df.loc[anchor_date, "d_php_l"]
 g_tuesday_mops = df.loc[anchor_date, "g_php_l"]
 k_tuesday_mops = df.loc[anchor_date, "k_php_l"]
 
-print(f"[INFO] Anchor Date: {anchor_date.strftime('%Y-%m-%d')} (Tuesday)")
-
 # ==========================================
-# 5. GENERATE STATIC DAILY TREND
+# 5. GENERATE DAILY TREND & DELTAS
 # ==========================================
-trend_data = []
 current_week_df = df[df.index >= anchor_date]
 
+dates_list = []
+diesel_trend = []
+gasoline_trend = []
+kerosene_trend = []
+
 for date, row in current_week_df.iterrows():
-    d_mvt = (row["d_php_l"] - d_tuesday_mops) * M_DIESEL
-    g_mvt = (row["g_php_l"] - g_tuesday_mops) * M_GAS
-    k_mvt = (row["k_php_l"] - k_tuesday_mops) * M_KERO
+    d_mvt = row["d_php_l"] - d_tuesday_mops
+    g_mvt = row["g_php_l"] - g_tuesday_mops
+    k_mvt = row["k_php_l"] - k_tuesday_mops
 
-    daily_diesel_proj = base_diesel + d_mvt
-    daily_gas_proj = base_gas + g_mvt
-    daily_kero_proj = base_kero + k_mvt
+    dates_list.append(date.strftime("%b %d"))
+    diesel_trend.append(round(base_diesel + d_mvt, 2))
+    gasoline_trend.append(round(base_gas + g_mvt, 2))
+    kerosene_trend.append(round(base_kero + k_mvt, 2))
 
-    trend_data.append({
-        "date": date.strftime("%Y-%m-%d"),
-        "diesel": round(daily_diesel_proj, 2),
-        "gasoline": round(daily_gas_proj, 2),
-        "kerosene": round(daily_kero_proj, 2),
-        "diesel_proj": round(daily_diesel_proj, 2),
-        "gas_proj": round(daily_gas_proj, 2),
-        "kero_proj": round(daily_kero_proj, 2),
-        "kerosene_proj": round(daily_kero_proj, 2),
-        "diesel_delta": round(d_mvt, 2),
-        "gas_delta": round(g_mvt, 2),
-        "kero_delta": round(k_mvt, 2)
-    })
+latest_d_delta = current_week_df.iloc[-1]["d_php_l"] - d_tuesday_mops
+latest_g_delta = current_week_df.iloc[-1]["g_php_l"] - g_tuesday_mops
+latest_k_delta = current_week_df.iloc[-1]["k_php_l"] - k_tuesday_mops
 
-latest = trend_data[-1]
+def get_status(delta):
+    if round(delta, 2) > 0.05:
+        return "HIKE"
+    elif round(delta, 2) < -0.05:
+        return "ROLLBACK"
+    return "NO CHANGE"
 
-# Forex statistics over last 7 trading days
-recent_forex = df["forex"].iloc[-7:]
-forex_latest = float(df["forex"].iloc[-1])
-forex_high = float(recent_forex.max())
-forex_low = float(recent_forex.min())
+recent_forex_rates = df["forex"].iloc[-7:].round(2).tolist()
+forex_latest = round(float(df["forex"].iloc[-1]), 2)
 
 # ==========================================
-# 6. HYBRID OUTPUT PAYLOAD (PREVENTS FRONTEND CRASH)
+# 6. EXACT JSON SCHEMA REQUIRED BY INDEX.HTML
 # ==========================================
 output_payload = {
-    # General Timestamp
     "updated_at": current_pht.strftime("%B %d, %Y %I:%M %p PHT"),
-    "last_updated": current_pht.strftime("%B %d, %Y %I:%M %p PHT"),
-    "anchor_date": anchor_date.strftime("%Y-%m-%d"),
-
-    # Flat Schema (For legacy frontend readers)
-    "baseline_diesel": base_diesel,
-    "baseline_gas": base_gas,
-    "baseline_kerosene": base_kero,
-    "current_diesel": base_diesel,
-    "current_gas": base_gas,
-    "current_gasoline": base_gas,
-    "current_kero": base_kero,
-    "current_kerosene": base_kero,
-
-    "projected_diesel": latest["diesel_proj"],
-    "projected_gas": latest["gas_proj"],
-    "projected_gasoline": latest["gas_proj"],
-    "projected_kero": latest["kero_proj"],
-    "projected_kerosene": latest["kero_proj"],
-
-    "expected_diesel": latest["diesel_delta"],
-    "expected_gas": latest["gas_delta"],
-    "expected_gasoline": latest["gas_delta"],
-    "expected_kero": latest["kero_delta"],
-    "expected_kerosene": latest["kero_delta"],
-
-    "forex_current": round(forex_latest, 2),
-    "forex_high": round(forex_high, 2),
-    "forex_low": round(forex_low, 2),
-
-    # Nested Schema (For structured frontend readers)
-    "baselines": {
-        "diesel": base_diesel,
-        "gasoline": base_gas,
-        "kerosene": base_kero
-    },
-    "projected": {
-        "diesel": latest["diesel_proj"],
-        "gasoline": latest["gas_proj"],
-        "kerosene": latest["kero_proj"]
-    },
-    "expected_adjustment": {
-        "diesel": latest["diesel_delta"],
-        "gasoline": latest["gas_delta"],
-        "kerosene": latest["kero_delta"]
+    "fuels": {
+        "diesel": {
+            "est_weekly_impact": round(latest_d_delta, 2),
+            "current_pump_price": round(base_diesel, 2),
+            "projected_pump_price": round(base_diesel + latest_d_delta, 2),
+            "status": get_status(latest_d_delta),
+            "dates": dates_list,
+            "trend": diesel_trend
+        },
+        "gasoline": {
+            "est_weekly_impact": round(latest_g_delta, 2),
+            "current_pump_price": round(base_gas, 2),
+            "projected_pump_price": round(base_gas + latest_g_delta, 2),
+            "status": get_status(latest_g_delta),
+            "dates": dates_list,
+            "trend": gasoline_trend
+        },
+        "kerosene": {
+            "est_weekly_impact": round(latest_k_delta, 2),
+            "current_pump_price": round(base_kero, 2),
+            "projected_pump_price": round(base_kero + latest_k_delta, 2),
+            "status": get_status(latest_k_delta),
+            "dates": dates_list,
+            "trend": kerosene_trend
+        }
     },
     "forex": {
-        "current": round(forex_latest, 2),
-        "high_7d": round(forex_high, 2),
-        "low_7d": round(forex_low, 2),
-        "high": round(forex_high, 2),
-        "low": round(forex_low, 2)
-    },
-
-    # Trend Array
-    "trend": trend_data
+        "current": forex_latest,
+        "rates": recent_forex_rates
+    }
 }
 
 with open(DATA_FILE, "w") as f:
     json.dump(output_payload, f, indent=4)
 
-print(f"[SUCCESS] {DATA_FILE} generated successfully with hybrid compatibility.")
+print(f"[SUCCESS] {DATA_FILE} successfully generated for index.html compatibility.")
