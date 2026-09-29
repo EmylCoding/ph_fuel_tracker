@@ -35,42 +35,11 @@ def save_json(path, value):
     with path.open("w", encoding="utf-8") as f:
         json.dump(value, f, indent=2)
 
-def extract_price(text, label):
-    """
-    Extract the OFFICIAL average price from the sentence structure:
-      "average diesel price is ₱95.95/L"
-    
-    This avoids matching weekly changes like "-₱7.57".
-    """
-    pattern = rf"""
-        average
-        \s+
-        {label}
-        \s+
-        price
-        \s+
-        is
-        \s+
-        (?:₱|PHP)
-        \s*
-        (?P<price>\d{{1,3}}(?:,\d{{3}})*\.\d{{1,2}})
-    """
-    
-    match = re.search(pattern, text, flags=re.IGNORECASE | re.VERBOSE)
-    if not match:
-        return None
-    
-    return float(match.group("price").replace(",", ""))
-
-
 def fetch_gaswatch_prices():
     """
     Fetch official average Diesel and Unleaded prices from GasWatch PH.
-
-    Note:
-      GasWatch main summary does not clearly expose a separate average
-      Kerosene value, so kerosene remains None and the code falls back
-      to a diesel-derived estimate.
+    
+    Searches for the specific sentence pattern that contains official averages.
     """
     try:
         response = requests.get(GASWATCH_URL, headers=REQUEST_HEADERS, timeout=20)
@@ -78,16 +47,39 @@ def fetch_gaswatch_prices():
         soup = BeautifulSoup(response.text, "html.parser")
         text = " ".join(soup.stripped_strings)
 
-        diesel = extract_price(text, r"(?:avg\.?|average)?\s*diesel")
-        gasoline = extract_price(text, r"(?:avg\.?|average)?\s*(?:unleaded|gasoline)")
-        kerosene = extract_price(text, r"(?:avg\.?|average)?\s*kerosene")
-
-        if diesel is None or gasoline is None:
-            print("[WARNING] Official GasWatch averages were not found.")
-            return None, None, None
-
-        print(f"[GASWATCH] Diesel: ₱{diesel:.2f}, Unleaded: ₱{gasoline:.2f}")
-        return diesel, gasoline, kerosene
+        # Search for the OFFICIAL AVERAGE sentence structure
+        # Pattern: "average diesel price is ₱95.95/L and unleaded is ₱89.55/L"
+        avg_pattern = r"average\s+diesel\s+price\s+is\s+(?:₱|PHP)\s*([\d.]+).*?unleaded\s+is\s+(?:₱|PHP)\s*([\d.]+)"
+        
+        match = re.search(avg_pattern, text, flags=re.IGNORECASE | re.DOTALL)
+        
+        if match:
+            diesel = float(match.group(1))
+            gasoline = float(match.group(2))
+            print(f"[GASWATCH] Found official averages - Diesel: ₱{diesel:.2f}, Unleaded: ₱{gasoline:.2f}")
+            return diesel, gasoline, None
+        
+        # Fallback: try individual patterns
+        diesel_match = re.search(
+            r"average\s+diesel\s+price\s+is\s+(?:₱|PHP)\s*([\d.]+)",
+            text,
+            flags=re.IGNORECASE
+        )
+        gasoline_match = re.search(
+            r"(?:average\s+)?unleaded\s+(?:price\s+)?is\s+(?:₱|PHP)\s*([\d.]+)",
+            text,
+            flags=re.IGNORECASE
+        )
+        
+        if diesel_match and gasoline_match:
+            diesel = float(diesel_match.group(1))
+            gasoline = float(gasoline_match.group(1))
+            print(f"[GASWATCH] Found averages - Diesel: ₱{diesel:.2f}, Unleaded: ₱{gasoline:.2f}")
+            return diesel, gasoline, None
+        
+        print("[WARNING] Could not find official GasWatch averages.")
+        print(f"[DEBUG] First 1500 chars: {text[:1500]}")
+        return None, None, None
 
     except requests.RequestException as error:
         print(f"[ERROR] GasWatch request failed: {error}")
@@ -95,7 +87,6 @@ def fetch_gaswatch_prices():
     except Exception as error:
         print(f"[ERROR] GasWatch parsing failed: {error}")
         return None, None, None
-
 
 def sync_baselines_with_gaswatch(base_data):
     """
