@@ -201,16 +201,29 @@ def convert_market_units(frame):
 
 def calculate_weekly_values(frame):
     """
-    Compare current 5 trading days vs prior 5 trading days.
-    Prevents partial-week distortion regardless of what day the script is executed.
+    Compares the current calendar week-to-date average against 
+    the previous calendar week's 5-day average (Mon-Fri).
     """
-    if len(frame) < 10:
-        raise RuntimeError("Not enough daily market data for prediction.")
+    df = frame.copy()
+    latest_date = df.index[-1]
 
-    current_5d = frame.iloc[-5:]
-    prior_5d = frame.iloc[-10:-5]
+    # Find the Monday of the current week
+    current_monday = latest_date - pd.Timedelta(days=latest_date.weekday())
+    current_monday = current_monday.normalize()
 
-    return current_5d.mean(), prior_5d.mean()
+    # Find the Monday and Friday of the previous calendar week
+    prev_monday = current_monday - pd.Timedelta(days=7)
+    prev_friday = current_monday - pd.Timedelta(days=3)
+
+    # Slice calendar weeks
+    current_week_data = df[df.index >= current_monday]
+    prior_week_data = df[(df.index >= prev_monday) & (df.index <= prev_friday)]
+
+    # Fallback to rolling window if data spans across boundary issues
+    if current_week_data.empty or prior_week_data.empty:
+        return df.iloc[-5:].mean(), df.iloc[-10:-5].mean()
+
+    return current_week_data.mean(), prior_week_data.mean()
 
 
 def get_status(delta):
