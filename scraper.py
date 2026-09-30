@@ -222,6 +222,10 @@ def get_status(delta):
 
 
 def build_trend(frame, base_data, now_pht):
+    """
+    Builds a continuous 7-day spot trend ending on today's date.
+    Anchors to the start of the 7-day period to prevent mid-week backwards distortion.
+    """
     daily = frame[["d_php_l", "g_php_l", "forex"]].copy()
     daily.index = pd.to_datetime(daily.index).normalize()
     daily = daily[~daily.index.duplicated(keep="last")]
@@ -233,8 +237,8 @@ def build_trend(frame, base_data, now_pht):
     if daily.empty:
         raise RuntimeError("Could not create a seven-day market trend.")
 
-    tuesday_rows = daily[daily.index.dayofweek == 1]
-    anchor = tuesday_rows.iloc[-1] if not tuesday_rows.empty else daily.iloc[0]
+    # Anchor to the first day of the 7-day window (7 days ago)
+    anchor = daily.iloc[0]
 
     base_diesel = float(base_data["current_diesel"])
     base_gasoline = float(base_data["current_gasoline"])
@@ -265,8 +269,7 @@ def build_trend(frame, base_data, now_pht):
         "kerosene": kerosene_trend,
         "forex_rates": [round(v, 2) for v in daily["forex"].tolist()],
     }
-
-
+    
 def get_fuel_data():
     pht_tz = dt.timezone(dt.timedelta(hours=8))
     now_pht = dt.datetime.now(pht_tz)
