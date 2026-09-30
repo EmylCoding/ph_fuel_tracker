@@ -35,11 +35,10 @@ def save_json(path, value):
     with path.open("w", encoding="utf-8") as f:
         json.dump(value, f, indent=2)
 
+
 def fetch_gaswatch_prices():
     """
     Fetch official average Diesel and Unleaded prices from GasWatch PH.
-    
-    Searches for the specific sentence pattern that contains official averages.
     """
     try:
         response = requests.get(GASWATCH_URL, headers=REQUEST_HEADERS, timeout=20)
@@ -47,38 +46,44 @@ def fetch_gaswatch_prices():
         soup = BeautifulSoup(response.text, "html.parser")
         text = " ".join(soup.stripped_strings)
 
-        # Search for the OFFICIAL AVERAGE sentence structure
-        # Pattern: "average diesel price is ₱95.95/L and unleaded is ₱89.55/L"
-        avg_pattern = r"average\s+diesel\s+price\s+is\s+(?:₱|PHP)\s*([\d.]+).*?unleaded\s+is\s+(?:₱|PHP)\s*([\d.]+)"
-        
+        # Search for official average sentence structure
+        avg_pattern = (
+            r"average\s+diesel\s+price\s+is\s+(?:₱|PHP)\s*([\d.]+).*?"
+            r"unleaded\s+is\s+(?:₱|PHP)\s*([\d.]+)"
+        )
         match = re.search(avg_pattern, text, flags=re.IGNORECASE | re.DOTALL)
-        
+
         if match:
             diesel = float(match.group(1))
             gasoline = float(match.group(2))
-            print(f"[GASWATCH] Found official averages - Diesel: ₱{diesel:.2f}, Unleaded: ₱{gasoline:.2f}")
+            print(
+                f"[GASWATCH] Found official averages - Diesel: ₱{diesel:.2f}, "
+                f"Unleaded: ₱{gasoline:.2f}"
+            )
             return diesel, gasoline, None
-        
-        # Fallback: try individual patterns
+
+        # Fallback: search individual patterns
         diesel_match = re.search(
             r"average\s+diesel\s+price\s+is\s+(?:₱|PHP)\s*([\d.]+)",
             text,
-            flags=re.IGNORECASE
+            flags=re.IGNORECASE,
         )
         gasoline_match = re.search(
             r"(?:average\s+)?unleaded\s+(?:price\s+)?is\s+(?:₱|PHP)\s*([\d.]+)",
             text,
-            flags=re.IGNORECASE
+            flags=re.IGNORECASE,
         )
-        
+
         if diesel_match and gasoline_match:
             diesel = float(diesel_match.group(1))
             gasoline = float(gasoline_match.group(1))
-            print(f"[GASWATCH] Found averages - Diesel: ₱{diesel:.2f}, Unleaded: ₱{gasoline:.2f}")
+            print(
+                f"[GASWATCH] Found averages - Diesel: ₱{diesel:.2f}, "
+                f"Unleaded: ₱{gasoline:.2f}"
+            )
             return diesel, gasoline, None
-        
+
         print("[WARNING] Could not find official GasWatch averages.")
-        print(f"[DEBUG] First 1500 chars: {text[:1500]}")
         return None, None, None
 
     except requests.RequestException as error:
@@ -88,14 +93,10 @@ def fetch_gaswatch_prices():
         print(f"[ERROR] GasWatch parsing failed: {error}")
         return None, None, None
 
+
 def sync_baselines_with_gaswatch(base_data):
     """
-    Compare stored baselines against GasWatch values.
-    If official averages changed, update:
-      - current_diesel
-      - current_gasoline
-      - current_kerosene
-      - historical arrays
+    Compare stored baselines against GasWatch values and update if necessary.
     """
     gaswatch_diesel, gaswatch_gasoline, gaswatch_kerosene = fetch_gaswatch_prices()
 
@@ -104,8 +105,10 @@ def sync_baselines_with_gaswatch(base_data):
         return base_data
 
     current_diesel = float(base_data.get("current_diesel", 0.0))
-    current_gasoline = float(base_data.get("current_gasoline", base_data.get("current_unleaded", 0.0)))
-    current_kerosene = float(base_data.get("current_kerosene", 131.0))
+    current_gasoline = float(
+        base_data.get("current_gasoline", base_data.get("current_unleaded", 0.0))
+    )
+    current_kerosene = float(base_data.get("current_kerosene", 123.68))
 
     diesel_changed = not np.isclose(current_diesel, gaswatch_diesel, atol=0.005)
     gasoline_changed = not np.isclose(current_gasoline, gaswatch_gasoline, atol=0.005)
@@ -144,8 +147,12 @@ def sync_baselines_with_gaswatch(base_data):
     base_data["historical_gasoline"] = historical_gasoline[-8:]
     base_data["historical_kerosene"] = historical_kerosene[-8:]
 
-    base_data["last_gaswatch_sync"] = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).isoformat()
-    base_data["last_anchor"] = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).date().isoformat()
+    base_data["last_gaswatch_sync"] = dt.datetime.now(
+        dt.timezone(dt.timedelta(hours=8))
+    ).isoformat()
+    base_data["last_anchor"] = (
+        dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).date().isoformat()
+    )
 
     save_json(BASELINES_FILE, base_data)
     print("[SUCCESS] baselines.json updated from GasWatch PH.")
@@ -153,15 +160,20 @@ def sync_baselines_with_gaswatch(base_data):
 
 
 def download_market_data():
-    diesel = yf.Ticker("HO=F").history(period="3mo")["Close"]
-    gasoline = yf.Ticker("RB=F").history(period="3mo")["Close"]
-    forex = yf.Ticker("PHP=X").history(period="3mo")["Close"]
+    """
+    Download market proxies from Yahoo Finance.
+    - Diesel Proxy: HO=F (Heating Oil futures, USD/gallon)
+    - Gasoline Proxy: BZ=F (Brent Crude futures, USD/barrel)
+    - Forex: PHP=X (USD/PHP exchange rate)
+    """
+    diesel = yf.Ticker("HO=F").history(period="2mo")["Close"]
+    gasoline = yf.Ticker("BZ=F").history(period="2mo")["Close"]
+    forex = yf.Ticker("PHP=X").history(period="2mo")["Close"]
 
-    frame = pd.concat([
-        diesel.rename("d_usd"),
-        gasoline.rename("g_usd"),
-        forex.rename("forex")
-    ], axis=1)
+    frame = pd.concat(
+        [diesel.rename("d_usd"), gasoline.rename("g_usd"), forex.rename("forex")],
+        axis=1,
+    )
 
     frame = frame.sort_index().ffill().dropna()
     if frame.empty:
@@ -174,43 +186,31 @@ def download_market_data():
 
 
 def convert_market_units(frame):
+    """
+    Convert raw futures prices to equivalent PHP / Liter.
+    - HO=F (USD/Gallon): 1 Gallon = 3.78541 Liters
+    - BZ=F (USD/Barrel): 1 Barrel = 158.987 Liters
+    """
     converted = frame.copy()
 
-    converted["d_php_l"] = (
-        converted["d_usd"] * 42 * converted["forex"] * 1.12 / 158.987
-    )
-    converted["g_php_l"] = (
-        converted["g_usd"] * 42 * converted["forex"] * 1.12 / 158.987
-    )
+    converted["d_php_l"] = (converted["d_usd"] * converted["forex"]) / 3.78541
+    converted["g_php_l"] = (converted["g_usd"] * converted["forex"]) / 158.987
 
     return converted
 
 
 def calculate_weekly_values(frame):
-    weekly = frame.copy()
-    iso = weekly.index.isocalendar()
+    """
+    Compare current 5 trading days vs prior 5 trading days.
+    Prevents partial-week distortion regardless of what day the script is executed.
+    """
+    if len(frame) < 10:
+        raise RuntimeError("Not enough daily market data for prediction.")
 
-    weekly["iso_year"] = iso.year
-    weekly["iso_week"] = iso.week
+    current_5d = frame.iloc[-5:]
+    prior_5d = frame.iloc[-10:-5]
 
-    weekly = (
-        weekly.groupby(["iso_year", "iso_week"])
-        .agg(
-            d_php_l=("d_php_l", "mean"),
-            g_php_l=("g_php_l", "mean"),
-            forex=("forex", "mean"),
-        )
-        .reset_index()
-    )
-
-    if len(weekly) < 3:
-        raise RuntimeError("Not enough weekly market data for prediction.")
-
-    historical_market = weekly.iloc[-9:-1]
-    current_week = weekly.iloc[-1]
-    prior_week = weekly.iloc[-2]
-
-    return historical_market, current_week, prior_week
+    return current_5d.mean(), prior_5d.mean()
 
 
 def get_status(delta):
@@ -224,8 +224,6 @@ def get_status(delta):
 def build_trend(frame, base_data, now_pht):
     daily = frame[["d_php_l", "g_php_l", "forex"]].copy()
     daily.index = pd.to_datetime(daily.index).normalize()
-
-    # remove duplicate dates before reindexing
     daily = daily[~daily.index.duplicated(keep="last")]
 
     end_date = pd.Timestamp(now_pht.date())
@@ -242,7 +240,8 @@ def build_trend(frame, base_data, now_pht):
     base_gasoline = float(base_data["current_gasoline"])
     base_kerosene = float(base_data["current_kerosene"])
 
-    gasoline_dampener = float(base_data.get("gasoline_dampener", 0.85))
+    diesel_dampener = float(base_data.get("diesel_dampener", 1.05))
+    gasoline_dampener = float(base_data.get("gasoline_dampener", 1.25))
     kerosene_factor = float(base_data.get("kerosene_factor", 0.92))
 
     diesel_trend = []
@@ -250,12 +249,14 @@ def build_trend(frame, base_data, now_pht):
     kerosene_trend = []
 
     for _, row in daily.iterrows():
-        diesel_move = row["d_php_l"] - anchor["d_php_l"]
-        gasoline_move = row["g_php_l"] - anchor["g_php_l"]
+        diesel_move = (row["d_php_l"] - anchor["d_php_l"]) * diesel_dampener
+        gasoline_move = (row["g_php_l"] - anchor["g_php_l"]) * gasoline_dampener
 
         diesel_trend.append(round(base_diesel + diesel_move, 2))
-        gasoline_trend.append(round(base_gasoline + (gasoline_move * gasoline_dampener), 2))
-        kerosene_trend.append(round(base_kerosene + (diesel_move * kerosene_factor), 2))
+        gasoline_trend.append(round(base_gasoline + gasoline_move, 2))
+        kerosene_trend.append(
+            round(base_kerosene + (diesel_move * kerosene_factor), 2)
+        )
 
     return {
         "dates": [d.strftime("%b %d") for d in daily.index],
@@ -274,43 +275,35 @@ def get_fuel_data():
     if base_data is None:
         raise FileNotFoundError(f"Missing required file: {BASELINES_FILE}")
 
-    # GasWatch is the source of truth for the official current averages
     base_data = sync_baselines_with_gaswatch(base_data)
 
     market = download_market_data()
     market = convert_market_units(market)
-    historical_market, current_week, prior_week = calculate_weekly_values(market)
-
-    historical_diesel = np.asarray(base_data.get("historical_diesel", []), dtype=float)
-    if len(historical_diesel) < 1:
-        raise RuntimeError("historical_diesel is empty.")
-
-    slope, intercept = np.polyfit(
-        historical_market["d_php_l"].to_numpy(),
-        historical_diesel,
-        1,
-    )
+    current_week, prior_week = calculate_weekly_values(market)
 
     base_diesel = float(base_data["current_diesel"])
     base_gasoline = float(base_data["current_gasoline"])
     base_kerosene = float(base_data["current_kerosene"])
 
-    gasoline_dampener = float(base_data.get("gasoline_dampener", 0.85))
+    # Calculate raw Week-over-Week changes in PHP / Liter
+    raw_d_wow = current_week["d_php_l"] - prior_week["d_php_l"]
+    raw_g_wow = current_week["g_php_l"] - prior_week["g_php_l"]
+
+    # Market Dampeners & Factors
+    diesel_dampener = float(base_data.get("diesel_dampener", 1.05))
+    gasoline_dampener = float(base_data.get("gasoline_dampener", 1.25))
     kerosene_factor = float(base_data.get("kerosene_factor", 0.92))
 
-    projected_diesel = current_week["d_php_l"] * slope + intercept
-    diesel_delta = round(projected_diesel - base_diesel, 2)
-
-    raw_g_wow_delta = current_week["g_php_l"] - prior_week["g_php_l"]
-    gasoline_delta = round(raw_g_wow_delta * gasoline_dampener, 2)
-
+    # Weekly Delta Projections
+    diesel_delta = round(raw_d_wow * diesel_dampener, 2)
+    gasoline_delta = round(raw_g_wow * gasoline_dampener, 2)
     kerosene_delta = round(diesel_delta * kerosene_factor, 2)
 
     trend = build_trend(market, base_data, now_pht)
 
     payload = {
         "updated_at": now_pht.strftime("%B %d, %Y %I:%M %p PHT"),
-        "source": "GasWatch PH and Yahoo Finance market proxies",
+        "source": "GasWatch PH and Brent Crude market proxies",
         "forex": {
             "current": round(float(market["forex"].iloc[-1]), 2),
             "rates": trend["forex_rates"],
