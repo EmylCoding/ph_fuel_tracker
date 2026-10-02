@@ -1,5 +1,5 @@
 {
-  "updated_at": "October 02, 2026 06:01 PM PHT",
+  "updated_at": "October 03, 2026 01:49 AM PHT",
   "source": "GasWatch PH and Brent Crude market proxies",
   "forex": {
     "current": 62.54,
@@ -9,6 +9,7 @@
       62.52,
       62.64,
       62.54,
+      62.54,
       62.54
     ],
     "trend_dates": [
@@ -17,15 +18,16 @@
       "Sep 29",
       "Sep 30",
       "Oct 01",
-      "Oct 02"
+      "Oct 02",
+      "Oct 03"
     ]
   },
   "fuels": {
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 95.95,
-      "est_weekly_impact": -1.18,
-      "projected_pump_price": 94.77,
+      "est_weekly_impact": -1.12,
+      "projected_pump_price": 94.83,
       "status": "ROLLBACK",
       "trend": [
         95.95,
@@ -33,7 +35,8 @@
         99.85,
         101.03,
         95.43,
-        92.44
+        92.95,
+        92.95
       ],
       "dates": [
         "Sep 27",
@@ -41,14 +44,15 @@
         "Sep 29",
         "Sep 30",
         "Oct 01",
-        "Oct 02"
+        "Oct 02",
+        "Oct 03"
       ]
     },
     "gasoline": {
       "name": "Gasoline",
       "current_pump_price": 89.55,
-      "est_weekly_impact": 0.17,
-      "projected_pump_price": 89.72,
+      "est_weekly_impact": 0.27,
+      "projected_pump_price": 89.82,
       "status": "HIKE",
       "trend": [
         89.55,
@@ -56,7 +60,8 @@
         89.06,
         89.43,
         88.97,
-        88.05
+        89.0,
+        89.0
       ],
       "dates": [
         "Sep 27",
@@ -64,14 +69,15 @@
         "Sep 29",
         "Sep 30",
         "Oct 01",
-        "Oct 02"
+        "Oct 02",
+        "Oct 03"
       ]
     },
     "kerosene": {
       "name": "Kerosene",
       "current_pump_price": 123.68,
-      "est_weekly_impact": -1.09,
-      "projected_pump_price": 122.59,
+      "est_weekly_impact": -1.03,
+      "projected_pump_price": 122.65,
       "status": "ROLLBACK",
       "trend": [
         123.68,
@@ -79,7 +85,8 @@
         127.27,
         128.35,
         123.2,
-        120.45
+        120.92,
+        120.92
       ],
       "dates": [
         "Sep 27",
@@ -87,7 +94,8 @@
         "Sep 29",
         "Sep 30",
         "Oct 01",
-        "Oct 02"
+        "Oct 02",
+        "Oct 03"
       ]
     }
   }
