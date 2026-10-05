@@ -1,16 +1,16 @@
 {
-  "updated_at": "October 05, 2026 11:11 AM PHT",
+  "updated_at": "October 05, 2026 11:41 AM PHT",
   "source": "GasWatch PH and Brent Crude market proxies",
   "forex": {
-    "current": 62.66,
+    "current": 62.67,
     "rates": [
       62.52,
       62.64,
       62.67,
       62.67,
       62.67,
-      62.66,
-      62.66
+      62.67,
+      62.67
     ],
     "trend_dates": [
       "Sep 29",
@@ -35,8 +35,8 @@
         91.71,
         89.26,
         89.26,
-        89.45,
-        89.45
+        89.42,
+        89.42
       ],
       "dates": [
         "Sep 29",
@@ -51,8 +51,8 @@
     "gasoline": {
       "name": "Gasoline",
       "current_pump_price": 89.55,
-      "est_weekly_impact": 0.18,
-      "projected_pump_price": 89.73,
+      "est_weekly_impact": 0.19,
+      "projected_pump_price": 89.74,
       "status": "HIKE",
       "trend": [
         89.55,
@@ -60,8 +60,8 @@
         89.54,
         89.52,
         89.52,
-        89.21,
-        89.21
+        89.26,
+        89.26
       ],
       "dates": [
         "Sep 29",
@@ -85,8 +85,8 @@
         119.77,
         117.52,
         117.52,
-        117.7,
-        117.7
+        117.68,
+        117.68
       ],
       "dates": [
         "Sep 29",
