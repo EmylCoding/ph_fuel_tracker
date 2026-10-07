@@ -1,51 +1,51 @@
 {
-  "updated_at": "October 07, 2026 02:18 AM PHT",
+  "updated_at": "October 08, 2026 02:53 AM PHT",
   "source": "GasWatch PH and Brent Crude market proxies",
   "forex": {
-    "current": 62.72,
+    "current": 62.67,
     "rates": [
       62.67,
       62.67,
-      62.67,
       62.53,
-      62.72,
-      62.72,
-      62.72
+      62.56,
+      62.67,
+      62.67,
+      62.67
     ],
     "trend_dates": [
-      "Oct 01",
       "Oct 02",
       "Oct 03",
       "Oct 04",
       "Oct 05",
       "Oct 06",
-      "Oct 07"
+      "Oct 07",
+      "Oct 08"
     ]
   },
   "fuels": {
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 94.64,
-      "est_weekly_impact": -4.4,
-      "projected_pump_price": 90.24,
+      "est_weekly_impact": -4.06,
+      "projected_pump_price": 90.58,
       "status": "ROLLBACK",
       "trend": [
         94.64,
-        92.19,
-        92.19,
-        92.02,
-        93.02,
-        93.2,
-        93.2
+        94.64,
+        94.47,
+        95.27,
+        95.82,
+        96.92,
+        96.92
       ],
       "dates": [
-        "Oct 01",
         "Oct 02",
         "Oct 03",
         "Oct 04",
         "Oct 05",
         "Oct 06",
-        "Oct 07"
+        "Oct 07",
+        "Oct 08"
       ]
     },
     "gasoline": {
@@ -56,46 +56,46 @@
       "status": "ROLLBACK",
       "trend": [
         91.45,
-        91.43,
-        91.43,
-        91.35,
-        90.81,
-        90.83,
-        90.83
+        91.45,
+        91.37,
+        90.75,
+        90.89,
+        90.84,
+        90.84
       ],
       "dates": [
-        "Oct 01",
         "Oct 02",
         "Oct 03",
         "Oct 04",
         "Oct 05",
         "Oct 06",
-        "Oct 07"
+        "Oct 07",
+        "Oct 08"
       ]
     },
     "kerosene": {
       "name": "Kerosene",
       "current_pump_price": 122.47,
-      "est_weekly_impact": -4.05,
-      "projected_pump_price": 118.42,
+      "est_weekly_impact": -3.74,
+      "projected_pump_price": 118.73,
       "status": "ROLLBACK",
       "trend": [
         122.47,
-        120.22,
-        120.22,
-        120.06,
-        120.98,
-        121.14,
-        121.14
+        122.47,
+        122.31,
+        123.05,
+        123.56,
+        124.57,
+        124.57
       ],
       "dates": [
-        "Oct 01",
         "Oct 02",
         "Oct 03",
         "Oct 04",
         "Oct 05",
         "Oct 06",
-        "Oct 07"
+        "Oct 07",
+        "Oct 08"
       ]
     }
   }
