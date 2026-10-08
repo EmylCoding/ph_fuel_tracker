@@ -1,101 +1,93 @@
 {
-  "updated_at": "October 08, 2026 02:53 AM PHT",
+  "updated_at": "October 09, 2026 02:48 AM PHT",
   "source": "GasWatch PH and Brent Crude market proxies",
   "forex": {
-    "current": 62.67,
+    "current": 62.9,
     "rates": [
-      62.67,
-      62.67,
       62.53,
       62.56,
-      62.67,
-      62.67,
-      62.67
+      62.65,
+      62.9,
+      62.9,
+      62.9
     ],
     "trend_dates": [
-      "Oct 02",
-      "Oct 03",
       "Oct 04",
       "Oct 05",
       "Oct 06",
       "Oct 07",
-      "Oct 08"
+      "Oct 08",
+      "Oct 09"
     ]
   },
   "fuels": {
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 94.64,
-      "est_weekly_impact": -4.06,
-      "projected_pump_price": 90.58,
+      "est_weekly_impact": -3.05,
+      "projected_pump_price": 91.59,
       "status": "ROLLBACK",
       "trend": [
         94.64,
-        94.64,
-        94.47,
-        95.27,
-        95.82,
-        96.92,
-        96.92
+        95.44,
+        95.98,
+        97.22,
+        102.02,
+        102.02
       ],
       "dates": [
-        "Oct 02",
-        "Oct 03",
         "Oct 04",
         "Oct 05",
         "Oct 06",
         "Oct 07",
-        "Oct 08"
+        "Oct 08",
+        "Oct 09"
       ]
     },
     "gasoline": {
       "name": "Gasoline",
       "current_pump_price": 91.45,
-      "est_weekly_impact": -0.95,
-      "projected_pump_price": 90.5,
+      "est_weekly_impact": -0.74,
+      "projected_pump_price": 90.71,
       "status": "ROLLBACK",
       "trend": [
         91.45,
-        91.45,
-        91.37,
-        90.75,
-        90.89,
-        90.84,
-        90.84
+        90.82,
+        90.96,
+        90.96,
+        92.37,
+        92.37
       ],
       "dates": [
-        "Oct 02",
-        "Oct 03",
         "Oct 04",
         "Oct 05",
         "Oct 06",
         "Oct 07",
-        "Oct 08"
+        "Oct 08",
+        "Oct 09"
       ]
     },
     "kerosene": {
       "name": "Kerosene",
       "current_pump_price": 122.47,
-      "est_weekly_impact": -3.74,
-      "projected_pump_price": 118.73,
+      "est_weekly_impact": -2.81,
+      "projected_pump_price": 119.66,
       "status": "ROLLBACK",
       "trend": [
         122.47,
-        122.47,
-        122.31,
-        123.05,
-        123.56,
-        124.57,
-        124.57
+        123.21,
+        123.7,
+        124.84,
+        129.26,
+        129.26
       ],
       "dates": [
-        "Oct 02",
-        "Oct 03",
         "Oct 04",
         "Oct 05",
         "Oct 06",
         "Oct 07",
-        "Oct 08"
+        "Oct 08",
+        "Oct 09"
       ]
     }
   }
