@@ -1,51 +1,51 @@
 {
-  "updated_at": "October 17, 2026 11:27 PM PHT",
+  "updated_at": "October 18, 2026 11:47 PM PHT",
   "source": "GasWatch PH and Brent Crude market proxies",
   "forex": {
     "current": 62.96,
     "rates": [
-      62.8,
       62.69,
       62.79,
       62.83,
+      62.94,
       62.94,
       62.96,
       62.96
     ],
     "trend_dates": [
-      "Oct 11",
       "Oct 12",
       "Oct 13",
       "Oct 14",
       "Oct 15",
       "Oct 16",
-      "Oct 17"
+      "Oct 17",
+      "Oct 18"
     ]
   },
   "fuels": {
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 91.65,
-      "est_weekly_impact": 3.92,
-      "projected_pump_price": 95.57,
+      "est_weekly_impact": 3.3,
+      "projected_pump_price": 94.95,
       "status": "HIKE",
       "trend": [
         91.65,
-        91.25,
-        95.06,
-        94.98,
-        93.7,
-        94.67,
-        94.67
+        95.46,
+        95.38,
+        94.1,
+        91.97,
+        92.0,
+        92.0
       ],
       "dates": [
-        "Oct 11",
         "Oct 12",
         "Oct 13",
         "Oct 14",
         "Oct 15",
         "Oct 16",
-        "Oct 17"
+        "Oct 17",
+        "Oct 18"
       ]
     },
     "gasoline": {
@@ -56,46 +56,46 @@
       "status": "HIKE",
       "trend": [
         92.9,
-        93.49,
-        93.22,
-        93.37,
-        93.38,
-        94.72,
-        94.72
+        92.63,
+        92.78,
+        92.79,
+        94.12,
+        94.13,
+        94.13
       ],
       "dates": [
-        "Oct 11",
         "Oct 12",
         "Oct 13",
         "Oct 14",
         "Oct 15",
         "Oct 16",
-        "Oct 17"
+        "Oct 17",
+        "Oct 18"
       ]
     },
     "kerosene": {
       "name": "Kerosene",
       "current_pump_price": 119.72,
-      "est_weekly_impact": 3.61,
-      "projected_pump_price": 123.33,
+      "est_weekly_impact": 3.04,
+      "projected_pump_price": 122.76,
       "status": "HIKE",
       "trend": [
         119.72,
-        119.35,
-        122.86,
-        122.79,
-        121.61,
-        122.5,
-        122.5
+        123.22,
+        123.15,
+        121.98,
+        120.01,
+        120.04,
+        120.04
       ],
       "dates": [
-        "Oct 11",
         "Oct 12",
         "Oct 13",
         "Oct 14",
         "Oct 15",
         "Oct 16",
-        "Oct 17"
+        "Oct 17",
+        "Oct 18"
       ]
     }
   }
