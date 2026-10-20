@@ -1,39 +1,39 @@
 {
-  "current_diesel": 91.65,
-  "current_gasoline": 92.9,
-  "current_kerosene": 119.72,
+  "current_diesel": 94.29,
+  "current_gasoline": 88.61,
+  "current_kerosene": 122.15,
   "gasoline_dampener": 0.85,
   "kerosene_factor": 0.92,
   "historical_gasoline": [
-    81.0,
     78.5,
     82.5,
     88.0,
     92.59,
     89.55,
     91.45,
-    92.9
+    92.9,
+    88.61
   ],
   "historical_diesel": [
-    93.0,
     88.0,
     93.0,
     97.11,
     104.91,
     95.95,
     94.64,
-    91.65
+    91.65,
+    94.29
   ],
   "historical_kerosene": [
-    119.5,
     114.33,
     119.91,
     124.53,
     131.0,
     123.68,
     122.47,
-    119.72
+    119.72,
+    122.15
   ],
-  "last_gaswatch_sync": "2026-10-13T12:38:05.621408+08:00",
-  "last_anchor": "2026-10-13"
+  "last_gaswatch_sync": "2026-10-21T00:54:09.396477+08:00",
+  "last_anchor": "2026-10-21"
 }
