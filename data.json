@@ -1,15 +1,16 @@
 {
-  "updated_at": "October 23, 2026 01:05 AM PHT",
+  "updated_at": "October 24, 2026 12:59 AM PHT",
   "source": "GasWatch PH and Brent Crude market proxies",
   "forex": {
-    "current": 63.43,
+    "current": 63.56,
     "rates": [
       62.95,
       62.95,
       63.01,
-      63.43,
-      63.43,
-      63.43
+      63.36,
+      63.56,
+      63.56,
+      63.56
     ],
     "trend_dates": [
       "Oct 18",
@@ -17,23 +18,25 @@
       "Oct 20",
       "Oct 21",
       "Oct 22",
-      "Oct 23"
+      "Oct 23",
+      "Oct 24"
     ]
   },
   "fuels": {
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 94.29,
-      "est_weekly_impact": 0.13,
-      "projected_pump_price": 94.42,
+      "est_weekly_impact": 0.78,
+      "projected_pump_price": 95.07,
       "status": "HIKE",
       "trend": [
         94.29,
         94.65,
         94.82,
-        92.56,
-        90.96,
-        90.96
+        92.46,
+        95.69,
+        92.79,
+        92.79
       ],
       "dates": [
         "Oct 18",
@@ -41,22 +44,24 @@
         "Oct 20",
         "Oct 21",
         "Oct 22",
-        "Oct 23"
+        "Oct 23",
+        "Oct 24"
       ]
     },
     "gasoline": {
       "name": "Gasoline",
       "current_pump_price": 88.61,
-      "est_weekly_impact": 1.32,
-      "projected_pump_price": 89.93,
+      "est_weekly_impact": 1.62,
+      "projected_pump_price": 90.23,
       "status": "HIKE",
       "trend": [
         88.61,
         88.5,
         88.28,
-        88.54,
-        89.63,
-        89.63
+        88.5,
+        90.09,
+        89.45,
+        89.45
       ],
       "dates": [
         "Oct 18",
@@ -64,22 +69,24 @@
         "Oct 20",
         "Oct 21",
         "Oct 22",
-        "Oct 23"
+        "Oct 23",
+        "Oct 24"
       ]
     },
     "kerosene": {
       "name": "Kerosene",
       "current_pump_price": 122.15,
-      "est_weekly_impact": 0.12,
-      "projected_pump_price": 122.27,
+      "est_weekly_impact": 0.72,
+      "projected_pump_price": 122.87,
       "status": "HIKE",
       "trend": [
         122.15,
         122.48,
         122.64,
-        120.56,
-        119.09,
-        119.09
+        120.47,
+        123.44,
+        120.77,
+        120.77
       ],
       "dates": [
         "Oct 18",
@@ -87,7 +94,8 @@
         "Oct 20",
         "Oct 21",
         "Oct 22",
-        "Oct 23"
+        "Oct 23",
+        "Oct 24"
       ]
     }
   }
