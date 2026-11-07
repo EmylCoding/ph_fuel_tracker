@@ -1,15 +1,16 @@
 {
-  "updated_at": "November 07, 2026 03:17 AM PHT",
+  "updated_at": "November 08, 2026 01:43 AM PHT",
   "source": "GasWatch PH and Brent Crude market proxies",
   "forex": {
-    "current": 63.01,
+    "current": 63.03,
     "rates": [
       63.56,
       63.27,
       63.36,
       63.31,
-      63.01,
-      63.01
+      62.75,
+      63.03,
+      63.03
     ],
     "trend_dates": [
       "Nov 02",
@@ -17,23 +18,25 @@
       "Nov 04",
       "Nov 05",
       "Nov 06",
-      "Nov 07"
+      "Nov 07",
+      "Nov 08"
     ]
   },
   "fuels": {
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 94.46,
-      "est_weekly_impact": -7.93,
-      "projected_pump_price": 86.53,
+      "est_weekly_impact": -8.12,
+      "projected_pump_price": 86.34,
       "status": "ROLLBACK",
       "trend": [
         94.46,
         96.01,
         90.41,
         92.93,
-        91.88,
-        91.88
+        91.89,
+        92.23,
+        92.23
       ],
       "dates": [
         "Nov 02",
@@ -41,22 +44,24 @@
         "Nov 04",
         "Nov 05",
         "Nov 06",
-        "Nov 07"
+        "Nov 07",
+        "Nov 08"
       ]
     },
     "gasoline": {
       "name": "Gasoline",
       "current_pump_price": 91.77,
-      "est_weekly_impact": -4.79,
-      "projected_pump_price": 86.98,
+      "est_weekly_impact": -4.93,
+      "projected_pump_price": 86.84,
       "status": "ROLLBACK",
       "trend": [
         91.77,
         91.21,
         88.22,
         89.43,
-        89.21,
-        89.21
+        89.15,
+        89.3,
+        89.3
       ],
       "dates": [
         "Nov 02",
@@ -64,22 +69,24 @@
         "Nov 04",
         "Nov 05",
         "Nov 06",
-        "Nov 07"
+        "Nov 07",
+        "Nov 08"
       ]
     },
     "kerosene": {
       "name": "Kerosene",
       "current_pump_price": 122.31,
-      "est_weekly_impact": -7.3,
-      "projected_pump_price": 115.01,
+      "est_weekly_impact": -7.47,
+      "projected_pump_price": 114.84,
       "status": "ROLLBACK",
       "trend": [
         122.31,
         123.73,
         118.59,
         120.9,
-        119.94,
-        119.94
+        119.95,
+        120.26,
+        120.26
       ],
       "dates": [
         "Nov 02",
@@ -87,7 +94,8 @@
         "Nov 04",
         "Nov 05",
         "Nov 06",
-        "Nov 07"
+        "Nov 07",
+        "Nov 08"
       ]
     }
   }
