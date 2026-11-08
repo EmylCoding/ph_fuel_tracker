@@ -1,25 +1,25 @@
 {
-  "updated_at": "November 08, 2026 01:43 AM PHT",
+  "updated_at": "November 09, 2026 01:53 AM PHT",
   "source": "GasWatch PH and Brent Crude market proxies",
   "forex": {
     "current": 63.03,
     "rates": [
-      63.56,
       63.27,
       63.36,
       63.31,
+      62.75,
       62.75,
       63.03,
       63.03
     ],
     "trend_dates": [
-      "Nov 02",
       "Nov 03",
       "Nov 04",
       "Nov 05",
       "Nov 06",
       "Nov 07",
-      "Nov 08"
+      "Nov 08",
+      "Nov 09"
     ]
   },
   "fuels": {
@@ -31,21 +31,21 @@
       "status": "ROLLBACK",
       "trend": [
         94.46,
-        96.01,
-        90.41,
-        92.93,
-        91.89,
-        92.23,
-        92.23
+        88.87,
+        91.38,
+        90.34,
+        90.34,
+        90.68,
+        90.68
       ],
       "dates": [
-        "Nov 02",
         "Nov 03",
         "Nov 04",
         "Nov 05",
         "Nov 06",
         "Nov 07",
-        "Nov 08"
+        "Nov 08",
+        "Nov 09"
       ]
     },
     "gasoline": {
@@ -56,21 +56,21 @@
       "status": "ROLLBACK",
       "trend": [
         91.77,
-        91.21,
-        88.22,
-        89.43,
-        89.15,
-        89.3,
-        89.3
+        88.78,
+        90.0,
+        89.71,
+        89.71,
+        89.86,
+        89.86
       ],
       "dates": [
-        "Nov 02",
         "Nov 03",
         "Nov 04",
         "Nov 05",
         "Nov 06",
         "Nov 07",
-        "Nov 08"
+        "Nov 08",
+        "Nov 09"
       ]
     },
     "kerosene": {
@@ -81,21 +81,21 @@
       "status": "ROLLBACK",
       "trend": [
         122.31,
-        123.73,
-        118.59,
-        120.9,
-        119.95,
-        120.26,
-        120.26
+        117.16,
+        119.47,
+        118.52,
+        118.52,
+        118.84,
+        118.84
       ],
       "dates": [
-        "Nov 02",
         "Nov 03",
         "Nov 04",
         "Nov 05",
         "Nov 06",
         "Nov 07",
-        "Nov 08"
+        "Nov 08",
+        "Nov 09"
       ]
     }
   }
