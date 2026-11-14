@@ -1,15 +1,16 @@
 {
-  "updated_at": "November 14, 2026 03:35 AM PHT",
+  "updated_at": "November 15, 2026 01:56 AM PHT",
   "source": "GasWatch PH and Brent Crude market proxies",
   "forex": {
-    "current": 63.75,
+    "current": 63.7,
     "rates": [
       63.03,
       62.94,
       62.95,
       63.26,
-      63.75,
-      63.75
+      62.97,
+      63.7,
+      63.7
     ],
     "trend_dates": [
       "Nov 09",
@@ -17,23 +18,25 @@
       "Nov 11",
       "Nov 12",
       "Nov 13",
-      "Nov 14"
+      "Nov 14",
+      "Nov 15"
     ]
   },
   "fuels": {
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 90.35,
-      "est_weekly_impact": -3.59,
-      "projected_pump_price": 86.76,
+      "est_weekly_impact": -3.64,
+      "projected_pump_price": 86.71,
       "status": "ROLLBACK",
       "trend": [
         90.35,
         88.78,
         90.2,
         91.89,
-        91.87,
-        91.87
+        91.05,
+        91.91,
+        91.91
       ],
       "dates": [
         "Nov 09",
@@ -41,20 +44,22 @@
         "Nov 11",
         "Nov 12",
         "Nov 13",
-        "Nov 14"
+        "Nov 14",
+        "Nov 15"
       ]
     },
     "gasoline": {
       "name": "Gasoline",
       "current_pump_price": 76.19,
-      "est_weekly_impact": -2.87,
-      "projected_pump_price": 73.32,
+      "est_weekly_impact": -2.86,
+      "projected_pump_price": 73.33,
       "status": "ROLLBACK",
       "trend": [
         76.19,
         75.78,
         76.21,
         77.41,
+        77.26,
         77.64,
         77.64
       ],
@@ -64,22 +69,24 @@
         "Nov 11",
         "Nov 12",
         "Nov 13",
-        "Nov 14"
+        "Nov 14",
+        "Nov 15"
       ]
     },
     "kerosene": {
       "name": "Kerosene",
       "current_pump_price": 118.53,
-      "est_weekly_impact": -3.3,
-      "projected_pump_price": 115.23,
+      "est_weekly_impact": -3.35,
+      "projected_pump_price": 115.18,
       "status": "ROLLBACK",
       "trend": [
         118.53,
         117.09,
         118.39,
         119.94,
-        119.93,
-        119.93
+        119.17,
+        119.97,
+        119.97
       ],
       "dates": [
         "Nov 09",
@@ -87,7 +94,8 @@
         "Nov 11",
         "Nov 12",
         "Nov 13",
-        "Nov 14"
+        "Nov 14",
+        "Nov 15"
       ]
     }
   }
