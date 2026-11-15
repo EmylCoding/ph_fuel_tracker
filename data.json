@@ -1,25 +1,25 @@
 {
-  "updated_at": "November 15, 2026 01:56 AM PHT",
+  "updated_at": "November 16, 2026 02:46 AM PHT",
   "source": "GasWatch PH and Brent Crude market proxies",
   "forex": {
-    "current": 63.7,
+    "current": 63.75,
     "rates": [
-      63.03,
       62.94,
       62.95,
       63.26,
       62.97,
-      63.7,
-      63.7
+      62.97,
+      63.75,
+      63.75
     ],
     "trend_dates": [
-      "Nov 09",
       "Nov 10",
       "Nov 11",
       "Nov 12",
       "Nov 13",
       "Nov 14",
-      "Nov 15"
+      "Nov 15",
+      "Nov 16"
     ]
   },
   "fuels": {
@@ -31,21 +31,21 @@
       "status": "ROLLBACK",
       "trend": [
         90.35,
-        88.78,
-        90.2,
-        91.89,
-        91.05,
-        91.91,
-        91.91
+        91.76,
+        93.45,
+        92.62,
+        92.62,
+        93.54,
+        93.54
       ],
       "dates": [
-        "Nov 09",
         "Nov 10",
         "Nov 11",
         "Nov 12",
         "Nov 13",
         "Nov 14",
-        "Nov 15"
+        "Nov 15",
+        "Nov 16"
       ]
     },
     "gasoline": {
@@ -56,21 +56,21 @@
       "status": "ROLLBACK",
       "trend": [
         76.19,
-        75.78,
-        76.21,
-        77.41,
-        77.26,
-        77.64,
-        77.64
+        76.62,
+        77.81,
+        77.67,
+        77.67,
+        78.07,
+        78.07
       ],
       "dates": [
-        "Nov 09",
         "Nov 10",
         "Nov 11",
         "Nov 12",
         "Nov 13",
         "Nov 14",
-        "Nov 15"
+        "Nov 15",
+        "Nov 16"
       ]
     },
     "kerosene": {
@@ -81,21 +81,21 @@
       "status": "ROLLBACK",
       "trend": [
         118.53,
-        117.09,
-        118.39,
-        119.94,
-        119.17,
-        119.97,
-        119.97
+        119.83,
+        121.39,
+        120.62,
+        120.62,
+        121.46,
+        121.46
       ],
       "dates": [
-        "Nov 09",
         "Nov 10",
         "Nov 11",
         "Nov 12",
         "Nov 13",
         "Nov 14",
-        "Nov 15"
+        "Nov 15",
+        "Nov 16"
       ]
     }
   }
