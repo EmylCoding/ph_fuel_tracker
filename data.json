@@ -1,101 +1,101 @@
 {
-  "updated_at": "November 23, 2026 03:29 AM PHT",
+  "updated_at": "November 24, 2026 07:47 AM PHT",
   "source": "GasWatch PH and Brent Crude market proxies",
   "forex": {
-    "current": 63.81,
+    "current": 63.86,
     "rates": [
-      63.86,
       63.52,
       63.58,
       63.74,
       63.74,
-      63.81,
-      63.81
+      63.74,
+      63.86,
+      63.86
     ],
     "trend_dates": [
-      "Nov 17",
       "Nov 18",
       "Nov 19",
       "Nov 20",
       "Nov 21",
       "Nov 22",
-      "Nov 23"
+      "Nov 23",
+      "Nov 24"
     ]
   },
   "fuels": {
     "diesel": {
       "name": "Diesel",
       "current_pump_price": 86.7,
-      "est_weekly_impact": -3.07,
-      "projected_pump_price": 83.63,
+      "est_weekly_impact": -4.33,
+      "projected_pump_price": 82.37,
       "status": "ROLLBACK",
       "trend": [
         86.7,
-        84.99,
-        84.69,
-        83.02,
-        83.02,
-        83.1,
-        83.1
+        86.4,
+        86.05,
+        86.05,
+        86.05,
+        81.39,
+        81.39
       ],
       "dates": [
-        "Nov 17",
         "Nov 18",
         "Nov 19",
         "Nov 20",
         "Nov 21",
         "Nov 22",
-        "Nov 23"
+        "Nov 23",
+        "Nov 24"
       ]
     },
     "gasoline": {
       "name": "Gasoline",
       "current_pump_price": 72.25,
-      "est_weekly_impact": -0.16,
-      "projected_pump_price": 72.09,
+      "est_weekly_impact": -0.98,
+      "projected_pump_price": 71.27,
       "status": "ROLLBACK",
       "trend": [
         72.25,
-        71.68,
-        71.72,
-        71.1,
-        71.1,
-        71.14,
-        71.14
+        72.29,
+        72.57,
+        72.57,
+        72.57,
+        70.66,
+        70.66
       ],
       "dates": [
-        "Nov 17",
         "Nov 18",
         "Nov 19",
         "Nov 20",
         "Nov 21",
         "Nov 22",
-        "Nov 23"
+        "Nov 23",
+        "Nov 24"
       ]
     },
     "kerosene": {
       "name": "Kerosene",
       "current_pump_price": 115.17,
-      "est_weekly_impact": -2.82,
-      "projected_pump_price": 112.35,
+      "est_weekly_impact": -3.98,
+      "projected_pump_price": 111.19,
       "status": "ROLLBACK",
       "trend": [
         115.17,
-        113.6,
-        113.32,
-        111.79,
-        111.79,
-        111.86,
-        111.86
+        114.89,
+        114.57,
+        114.57,
+        114.57,
+        110.29,
+        110.29
       ],
       "dates": [
-        "Nov 17",
         "Nov 18",
         "Nov 19",
         "Nov 20",
         "Nov 21",
         "Nov 22",
-        "Nov 23"
+        "Nov 23",
+        "Nov 24"
       ]
     }
   }
