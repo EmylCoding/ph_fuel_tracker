@@ -1,101 +1,101 @@
 {
-  "updated_at": "November 24, 2026 07:47 AM PHT",
+  "updated_at": "November 25, 2026 06:19 AM PHT",
   "source": "GasWatch PH and Brent Crude market proxies",
   "forex": {
-    "current": 63.86,
+    "current": 63.71,
     "rates": [
-      63.52,
       63.58,
       63.74,
       63.74,
       63.74,
-      63.86,
-      63.86
+      63.9,
+      63.71,
+      63.71
     ],
     "trend_dates": [
-      "Nov 18",
       "Nov 19",
       "Nov 20",
       "Nov 21",
       "Nov 22",
       "Nov 23",
-      "Nov 24"
+      "Nov 24",
+      "Nov 25"
     ]
   },
   "fuels": {
     "diesel": {
       "name": "Diesel",
-      "current_pump_price": 86.7,
-      "est_weekly_impact": -4.33,
-      "projected_pump_price": 82.37,
+      "current_pump_price": 84.01,
+      "est_weekly_impact": -5.16,
+      "projected_pump_price": 78.85,
       "status": "ROLLBACK",
       "trend": [
-        86.7,
-        86.4,
-        86.05,
-        86.05,
-        86.05,
-        81.39,
-        81.39
+        84.01,
+        83.66,
+        83.66,
+        83.66,
+        79.86,
+        78.9,
+        78.9
       ],
       "dates": [
-        "Nov 18",
         "Nov 19",
         "Nov 20",
         "Nov 21",
         "Nov 22",
         "Nov 23",
-        "Nov 24"
+        "Nov 24",
+        "Nov 25"
       ]
     },
     "gasoline": {
       "name": "Gasoline",
-      "current_pump_price": 72.25,
-      "est_weekly_impact": -0.98,
-      "projected_pump_price": 71.27,
+      "current_pump_price": 68.9,
+      "est_weekly_impact": -0.91,
+      "projected_pump_price": 67.99,
       "status": "ROLLBACK",
       "trend": [
-        72.25,
-        72.29,
-        72.57,
-        72.57,
-        72.57,
-        70.66,
-        70.66
+        68.9,
+        69.18,
+        69.18,
+        69.18,
+        68.16,
+        67.78,
+        67.78
       ],
       "dates": [
-        "Nov 18",
         "Nov 19",
         "Nov 20",
         "Nov 21",
         "Nov 22",
         "Nov 23",
-        "Nov 24"
+        "Nov 24",
+        "Nov 25"
       ]
     },
     "kerosene": {
       "name": "Kerosene",
-      "current_pump_price": 115.17,
-      "est_weekly_impact": -3.98,
-      "projected_pump_price": 111.19,
+      "current_pump_price": 112.7,
+      "est_weekly_impact": -4.75,
+      "projected_pump_price": 107.95,
       "status": "ROLLBACK",
       "trend": [
-        115.17,
-        114.89,
-        114.57,
-        114.57,
-        114.57,
-        110.29,
-        110.29
+        112.7,
+        112.38,
+        112.38,
+        112.38,
+        108.88,
+        108.0,
+        108.0
       ],
       "dates": [
-        "Nov 18",
         "Nov 19",
         "Nov 20",
         "Nov 21",
         "Nov 22",
         "Nov 23",
-        "Nov 24"
+        "Nov 24",
+        "Nov 25"
       ]
     }
   }
